@@ -1,0 +1,11 @@
+.footer {
+    display: flex;
+    margin-top: auto; 
+    padding: 1rem 0;
+    align-items: center;
+    justify-self: center;
+}
+
+.link-url {
+    color: black;
+}
