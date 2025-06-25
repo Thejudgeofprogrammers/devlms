@@ -1,0 +1,138 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e1e2f; /* матовый тёмный */
+  padding: 0.75rem 2rem;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left,
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  color: #c4b5fd; /* светлый фиолетовый */
+  font-weight: 500;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #ffffff;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  background: #a78bfa;
+  bottom: -4px;
+  left: 0;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-link-logo {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  text-decoration: none;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  filter: brightness(1.1);
+}
+
+.logo-svg {
+  width: 28px;
+  height: 28px;
+  filter: brightness(0) invert(1); 
+  transition: filter 0.3s ease;
+}
+
+body.light .logo-svg {
+  filter: none;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.nav-icon {
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  transition: filter 0.3s ease;
+}
+
+body.dark .nav-icon {
+  filter: brightness(0) invert(1);
+}
+
+body.light .nav-icon {
+  filter: none;
+}
+
+.nav-dropdown {
+  position: relative;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 140%;
+  right: 0;
+  background-color: var(--color-text-dark);
+  color: var(--color-text-light);
+
+  border-radius: 4px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 160px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+body.dark .dropdown-menu {
+  background-color: #2a2a3d;
+  color: var(--color-text-dark);
+  border: 1px solid #444;
+}
+
+.dropdown-menu a {
+  padding: 0.5rem 1rem;
+  color: inherit;
+  margin: 0px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background-color: var(--color-primary-light);
+  color: white;
+}
+
+.drop-link {
+  border-radius: 4px;
+}

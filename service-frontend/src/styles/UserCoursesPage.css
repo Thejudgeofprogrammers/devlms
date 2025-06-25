@@ -1,0 +1,87 @@
+.user-courses-page {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .user-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .skip-button {
+    background-color: var(--color-muted-light);
+    color: white;
+  }
+  
+  .skip-button:hover {
+    background-color: var(--color-primary-light);
+  }
+  
+  .course-summary h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+  }
+  
+  .course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .course-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid #d1d5db22;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .course-card:hover {
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.2);
+  }
+  
+  .course-image {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+  
+  .course-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  
+  .course-category {
+    font-size: 0.875rem;
+    color: var(--color-muted-dark);
+    margin-bottom: 0.5rem;
+  }
+  
+  .course-progress {
+    font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .progress-bar {
+    height: 6px;
+    border-radius: 3px;
+    background-color: #e5e7eb;
+    margin-bottom: 4px;
+    overflow: hidden;
+  }
+  
+  .progress-fill {
+    height: 100%;
+    background-color: var(--color-primary-light);
+  }
+  

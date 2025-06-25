@@ -1,0 +1,66 @@
+.teachers-page {
+    padding: 2rem;
+  }
+  
+  .teachers-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .teachers-section h2 {
+    margin-bottom: 1rem;
+  }
+  
+  .teacher-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+  
+  .teacher-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.04);
+    text-decoration: none;
+    color: inherit;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  
+  .teacher-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(124, 58, 237, 0.3);
+  }
+  
+.teacher-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #ddd;
+    flex-shrink: 0;
+}
+  
+.teacher-info h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+}
+  
+  .teacher-dept {
+    font-size: 0.9rem;
+    color: var(--color-muted-light);
+  }
+  
+  body.dark .teacher-dept {
+    color: var(--color-muted-dark);
+  }
+  
+  .teacher-role {
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+  
