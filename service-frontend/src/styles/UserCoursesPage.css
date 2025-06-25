@@ -1,5 +1,6 @@
 .user-courses-page {
     padding: 2rem;
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
   }
@@ -10,6 +11,7 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    color: #fff;
   }
   
   .skip-button {
@@ -24,6 +26,7 @@
   .course-summary h2 {
     margin-bottom: 1.5rem;
     font-size: 1.5rem;
+    color: #fff;
   }
   
   .course-list {

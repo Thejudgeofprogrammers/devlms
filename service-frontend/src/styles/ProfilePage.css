@@ -1,0 +1,70 @@
+.profile-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: #fff;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.profile-header h1 {
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 720px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #d1d5db22;
+  border-radius: 16px;
+  padding: 1.8rem;
+  box-shadow: 0 8px 20px rgba(124, 58, 237, 0.15);
+  backdrop-filter: blur(4px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(124, 58, 237, 0.25);
+}
+
+.profile-card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  border-left: 4px solid #4f46e5;
+  padding-left: 0.6rem;
+}
+
+.profile-card p {
+  margin: 0.4rem 0;
+  font-size: 1rem;
+}
+
+.profile-list {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.profile-list li::before {
+  content: "•";
+  color: #4f46e5;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}

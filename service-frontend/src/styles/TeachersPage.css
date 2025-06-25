@@ -5,10 +5,12 @@
   .teachers-header {
     text-align: center;
     margin-bottom: 2rem;
+    color: #fff;
   }
   
   .teachers-section h2 {
     margin-bottom: 1rem;
+    color: #fff;
   }
   
   .teacher-list {
@@ -24,7 +26,6 @@
     border-radius: 12px;
     background-color: rgba(255, 255, 255, 0.04);
     text-decoration: none;
-    color: inherit;
     align-items: center;
     transition: transform 0.2s, box-shadow 0.2s;
   }
@@ -35,14 +36,14 @@
   }
   
 .teacher-photo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: #ddd;
-    flex-shrink: 0;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: transparent;
+  flex-shrink: 0;
 }
   
 .teacher-info h3 {

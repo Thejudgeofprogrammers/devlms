@@ -11,7 +11,7 @@ export function Navigation() {
                 <img src={logo} alt="ЛГУ лого" className="logo-img" />
             </NavLink>
             <NavLink to="/" className="nav-link">Мои курсы</NavLink>
-            <NavLink to="/teaches" className="nav-link">О преподавателях</NavLink>
+            <NavLink to="/teachers" className="nav-link">О преподавателях</NavLink>
         </div>
             <NavigationRight />
         </nav>
