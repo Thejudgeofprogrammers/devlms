@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import "../styles/GetStartedPage.css";
+import "../styles/styles.css";
 
 export default function GetStartedPage() {
   const navigate = useNavigate();
 
   return (
-    <main className="get-started">
-      <div className="container">
+    <main className="main-content">
+      <div className="container-a">
         <h1 className="title">Добро пожаловать в LMS ЛГУ</h1>
         <p className="subtitle">
           Интерактивная образовательная платформа для студентов и преподавателей. Учитесь, выполняйте задания и отслеживайте прогресс в одном месте.

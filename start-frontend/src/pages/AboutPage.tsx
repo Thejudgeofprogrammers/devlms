@@ -1,13 +1,13 @@
-import pgn from '../assets/lgu.png';
 import { useNavigate } from "react-router-dom";
-import "../styles/GetStartedPage.css";
+import pgn from '../assets/lgu.png';
+import "../styles/Layout.css";
 
 export default function AboutPage() {
   const navigate = useNavigate();
 
   return (
-    <main className="get-started">
-      <div className="container">
+    <main className="main-content">
+      <div className="container-b">
         <h1 className="title">История ЛГУ</h1>
 
         <p className="subtitle">
@@ -20,7 +20,7 @@ export default function AboutPage() {
         <img
           src={pgn}
           alt="ЛГУ фото"
-          style={{ maxWidth: "100%", borderRadius: 12, marginBottom: "2rem", boxShadow: "0 0 10px rgba(0,0,0,0.1)" }}
+          className="about-image"
         />
 
         <div className="button-group">

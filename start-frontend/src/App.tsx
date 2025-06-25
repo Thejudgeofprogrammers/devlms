@@ -4,17 +4,22 @@ import GetStartedPage from "./pages/GetStartedPage";
 import LinksPage from "./pages/LinksPage";
 import AboutPage from "./pages/AboutPage";
 import { Footer } from "./components/Footer";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import './App.css';
 
 export default function App() {
   return (
     <Router>
-      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <div className="app-wrapper">
         <Navigation />
-        <main style={{ flexGrow: 1 }}>
+        <main className="content-wrapper">
           <Routes>
-            <Route path='/' element={<GetStartedPage />} />
+            <Route path="/" element={<GetStartedPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/links" element={<LinksPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
           </Routes>
         </main>
         <Footer />
