@@ -1,0 +1,26 @@
+.footer {
+  background-color: #1e1e2f;
+  color: #c4b5fd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 2rem;
+  gap: 2rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 -2px 8px rgba(124, 58, 237, 0.1);
+  flex-wrap: wrap;
+  z-index: 10;
+}
+
+.link-url {
+  color: #a78bfa;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.link-url:hover {
+  color: #c4b5fd;
+  text-decoration: underline;
+}

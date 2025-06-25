@@ -1,0 +1,89 @@
+.auth-container {
+  background-color: #1e1e2f;
+  color: #e0e7ff;
+  max-width: 420px;
+  width: 100%;
+  margin: 8vh auto;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;  /* Чтобы паддинги не влияли на ширину */
+}
+
+.auth-container h2 {
+  font-size: 2rem;
+  text-align: center;
+  color: #c4b5fd;
+  margin-bottom: 0.5rem;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.auth-container input {
+  padding: 0.9rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid #4b5563;
+  background-color: #2a2a3d;
+  color: #f3f4f6;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.auth-container input:focus {
+  outline: none;
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+}
+
+.auth-container button {
+  padding: 0.9rem 1.2rem;
+  background: linear-gradient(to right, #7c3aed, #a78bfa);
+  border: none;
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.auth-container button:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(to right, #6d28d9, #c4b5fd);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+.auth-link {
+  text-align: center;
+  color: #a78bfa;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  user-select: none;
+}
+
+.auth-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.error {
+  background-color: #991b1b;
+  color: #fee2e2;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(185, 28, 28, 0.2);
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
