@@ -73,6 +73,7 @@ export function NavigationRight() {
         {isProfileOpen && (
           <div className="dropdown-menu">
             <NavLink to="/profile" className="drop-link">Мой профиль</NavLink>
+            <NavLink to="/friends" className="drop-link">Друзья</NavLink>
             <NavLink to="/logout" className="drop-link">Выйти</NavLink>
           </div>
         )}

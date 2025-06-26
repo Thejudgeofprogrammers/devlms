@@ -171,3 +171,189 @@
 - Пуш-уведомления
 - Мобильная версия
 - Локализация (мультиязычность)
+
+## Проектирование данных
+
+1. PostgreSQL (PrismaORM)
+2. MongoDB (PrismaORM)
+3. Redis
+
+```ts
+// PostgreSQL
+
+interface User {
+    user_id: number;
+    login: string;
+    email: string;
+    password: string;
+    contacts_id: number;
+    user_info_id: number;
+    chat_id: number;
+    role_id: number;
+    photo_url: string;
+    first_entry: Date;
+    last_entry: Date; // Date.now()
+}
+
+// friends table (многие-ко-многим)
+interface UserFriends {
+    user_id: number;
+    friend_id: number;
+}
+
+// user_courses table (многие-ко-многим)
+interface UserCourses {
+    user_id: number;
+    course_id: number;
+}
+
+interface UserChats {
+    user_id: number;
+    chat_id: string;
+}
+
+interface Role {
+    role_id: number;
+    role: 'user' | 'teacher' | 'admin';
+}
+
+interface Contacts {
+    contact_id: string;
+    contry: string;
+    city: string;
+    time_zone: string;
+}
+
+interface UserInfo {
+    user_info_id: number
+    name: string;
+    fam: string;
+    surname: string;
+    сitizenship: string;
+    faculty: string;
+    speciality: string;
+    profile: string;
+    level_of_training: string;
+    form_learning: string;
+    study_group: string;
+    language: string;
+}
+
+interface Cource {
+    cource_id: number;
+    name: string;
+    participants: User.user_id[];
+    teachers: Teacher.teacher_id[];
+    plan_course: string;
+}
+
+interface CourseParticipants {
+    course_id: number;
+    user_id: number;
+}
+
+interface CourseTeachers {
+    course_id: number;
+    teacher_id: number;
+}
+
+interface Teacher {
+    teacher_id: number;
+    photo_url: string;
+    department: string;
+    job_title: string;
+    education: string;
+    disciplines_id: number[];
+    advanced_training: number[];
+}
+
+interface TeacherDisciplines {
+    teacher_id: number;
+    discipline_id: number;
+}
+
+interface TeacherAdvanced {
+    teacher_id: number;
+    advanced_id: number;
+}
+
+interface Discipline {
+    discipline_id: number;
+    name: string;
+}
+
+interface Advanced {
+    advanced_id: number;
+    name: string;
+    hourse: number;
+    year: number;
+}
+
+// Mongodb
+
+interface Chat {
+    chat_id: string;
+    chat_type: enum('bot', 'user');
+    owners: User.user_id[]; // 2 user
+    messages: Message.message_id[];
+    created_at: Date;
+    updated_at: Date;
+}
+
+interface Message {
+    message_id: string;
+    owner: User.user_id;
+    text: string;
+    message: string;
+    created_at: Date;
+}
+
+// Redis
+
+// Header Authorize: token sha(256 + user_id + secret_salt)
+{ 
+    user_id: number;
+    jwt_token: string
+}
+
+```
+
+## Проектирование API
+
+### Авторизация Аутентификация
+
+POST /api/register
+Описание: Зарегистрироваться
+
+POST /api/auth
+Описание: Вход
+
+### Профиль
+
+GET /api/users/:user_id
+Описание: Информация о профиле
+
+POST /api/users/:user_id
+Описание: Информация о профиле
+
+### Курсы
+
+GET /api/users/:user_id/cources
+Описание: Все курсы
+
+GET /api/users/:user_id/cources/:cource_id
+Описание: Информация о курсе
+
+POST /api/users/:user_id/cources
+Описание: Создание курса (роль teacher|admin)
+
+POST /api/users/:user_id/cources/:cource_id/add
+Описание: Участие в курсе (роль teacher|admin)
+
+...
+
+### Преподаватели
+
+POST /api/users/:user_id/get_role
+params: { role: 'user | teacher' }
+Описание: Участие в курсе (роль teacher|admin)

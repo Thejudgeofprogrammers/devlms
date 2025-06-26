@@ -10,7 +10,6 @@ export default function ChatPageGIGA() {
 
     setMessages([...messages, { sender: 'user', text: input }]);
 
-    // Имитируем ответ от ИИ
     setTimeout(() => {
       setMessages(prev => [...prev, { sender: 'bot', text: `🤖 ИИ ответ: ${input.split('').reverse().join('')}` }]);
     }, 500);

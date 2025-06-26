@@ -1,0 +1,85 @@
+.friends-page {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    color: #fff;
+  }
+  
+  .friends-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .friends-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .friend-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid #ffffff1a;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 6px 18px rgba(124, 58, 237, 0.25);
+    transition: transform 0.2s ease;
+  }
+  
+  .friend-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .status-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+  }
+  
+  .status-dot.online {
+    background-color: #4ade80;
+  }
+  
+  .status-dot.offline {
+    background-color: #94a3b8;
+  }
+  
+  .status-dot.away {
+    background-color: #facc15;
+  }
+  
+  .friend-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+  }
+  
+  .friend-info p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+  }
+  
+  .status-label {
+    font-style: italic;
+  }
+  
+  .message-button {
+    margin-top: 0.8rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #4f46e5;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .message-button:hover {
+    background-color: #6366f1;
+  }
+  

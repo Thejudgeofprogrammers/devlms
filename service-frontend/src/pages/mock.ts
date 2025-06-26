@@ -169,3 +169,10 @@ export const aiChats = [
   { id: 2, name: 'Помочь с уроками', description: 'Чат с искусственным интеллектом' },
 ];
 
+export const friends = [
+    { id: 1, name: 'Алексей Петров', group: '22-124-1', status: 'online' },
+    { id: 2, name: 'Елена Смирнова', group: '22-124-1', status: 'offline' },
+    { id: 3, name: 'Иван Гаврилов', group: '22-124-2', status: 'online' },
+    { id: 4, name: 'Мария Козлова', group: '22-124-3', status: 'away' }
+  ];
+

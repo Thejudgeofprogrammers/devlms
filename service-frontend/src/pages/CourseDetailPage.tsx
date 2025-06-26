@@ -58,7 +58,7 @@ export default function CourseDetailPage() {
           </p>
         </div>
       </section>
-    <Link to="/courses" className="back-link">← Назад к курсам</Link>
+    <Link to="/" className="back-link">← Назад к курсам</Link>
     </div>
   );
 }

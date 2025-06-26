@@ -9,6 +9,7 @@ import CourseDetailPage from "./pages/CourseDetailPage";
 import ChatPageGIGA from "./pages/ChatPageGIGA";
 import ProfilePage from "./pages/ProfilePage";
 import ChatListPage from "./pages/ChatListPage";
+import FriendsPage from "./pages/FriendsPage";
 
 export default function App() {
   return (
@@ -24,6 +25,8 @@ export default function App() {
             <Route path="/chat_llm" element={<ChatPageGIGA />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/chats" element={<ChatListPage />} />
+            <Route path="/friends" element={<FriendsPage />} />
+            <Route path="/chats/:id" element={<ChatPageGIGA />} />
           </Routes>
         </main>
         <Footer />
