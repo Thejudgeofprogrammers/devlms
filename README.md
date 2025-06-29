@@ -185,6 +185,7 @@ interface User {
     user_id: number;
     login: string;
     email: string;
+    phone_number: string;
     password: string;
     contacts_id: number;
     user_info_id: number;
@@ -214,7 +215,7 @@ interface UserChats {
 
 interface Role {
     role_id: number;
-    role: 'user' | 'teacher' | 'admin';
+    role: 'User' | 'Teacher' | 'Admin';
 }
 
 interface Contacts {
@@ -323,7 +324,7 @@ interface Message {
 ### Авторизация Аутентификация
 
 POST /api/register
-Описание: Зарегистрироваться
+Описание: Зарегистрироваться (Создание пользователя)
 
 POST /api/auth
 Описание: Вход
@@ -333,27 +334,46 @@ POST /api/auth
 GET /api/users/:user_id
 Описание: Информация о профиле
 
-POST /api/users/:user_id
-Описание: Информация о профиле
+PUT /api/users/:user_id
+Описание: 
+- Изменить профиль (роль user | teacher | admin)
+- Изменить разделы образования и квалификации (teacher | admin)
+- Изменить роль (admin)
+- Если пользователь user, admin то только информация о пользователе
+- Если пользователь teacher, то базовая + образование
+
+DELETE /api/users/:user_id
+Описание: удалить аккаунт (нцжке токен и пароль)
+- User | Teacher - могут удалить аккаунт
+- Admin - Не может удалить свой аккаунт, но может User | Teacher
 
 ### Курсы
 
 GET /api/users/:user_id/cources
-Описание: Все курсы
+Описание: Все курсы (User | Teacher)
 
-GET /api/users/:user_id/cources/:cource_id
-Описание: Информация о курсе
+GET /api/course
+Описание: Все существующие курсы (admin, teacher)
 
-POST /api/users/:user_id/cources
-Описание: Создание курса (роль teacher|admin)
+GET /api/course/:course_id 
+Описание: Можно посмотреть курс пользователя (Если он у него есть)
 
-POST /api/users/:user_id/cources/:cource_id/add
-Описание: Участие в курсе (роль teacher|admin)
+POST /api/course
+Описание: Создание курса (роль teacher | admin)
 
-...
+PUT /api/course/:course_id
+Описание: Изменить курс (роль admin | teacher (который находится на курсе))
+
+DELETE /api/course/:course_id
+Описание: Удалить курс (роль admin | teacher (который находится на курсе))
+
 
 ### Преподаватели
 
-POST /api/users/:user_id/get_role
-params: { role: 'user | teacher' }
-Описание: Участие в курсе (роль teacher|admin)
+GET /api/teachers
+Описание: Получить все преподавателей
+
+GET /api/teachers/:user_id
+Описание: Получить преподавателя
+
+### WC

@@ -1,0 +1,165 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    user_id      Int      @id @default(autoincrement())
+    login        String   @unique
+    phone_number String   @unique
+    email        String   @unique
+    password     String
+    contacts_id  Int
+    user_info_id Int
+    chat_ids     String[] @default([])
+    role_id      Int
+    photo_url    String
+    first_entry  DateTime
+    last_entry   DateTime
+
+    contacts Contacts @relation(fields: [contacts_id], references: [contact_id])
+    userInfo UserInfo @relation(fields: [user_info_id], references: [user_info_id])
+    role     Role     @relation(fields: [role_id], references: [role_id])
+
+    userCourses UserCourses[]
+    courseParts CourseParticipants[]
+
+    // Друзья
+    friends  UserFriends[] @relation("UserToFriends")
+    friendOf UserFriends[] @relation("FriendToUsers")
+}
+
+model UserFriends {
+    user_id   Int
+    friend_id Int
+
+    user   User @relation("UserToFriends", fields: [user_id], references: [user_id])
+    friend User @relation("FriendToUsers", fields: [friend_id], references: [user_id])
+
+    @@id([user_id, friend_id])
+}
+
+model UserCourses {
+    user_id   Int
+    course_id Int
+
+    user   User   @relation(fields: [user_id], references: [user_id])
+    course Course @relation(fields: [course_id], references: [course_id])
+
+    @@id([user_id, course_id])
+}
+
+model Role {
+    role_id Int    @id @default(autoincrement())
+    role    String
+
+    users User[]
+}
+
+model Contacts {
+    contact_id Int    @id @default(autoincrement())
+    country    String
+    city       String
+    time_zone  String
+
+    users User[]
+}
+
+model UserInfo {
+    user_info_id      Int    @id @default(autoincrement())
+    name              String
+    fam               String
+    surname           String
+    citizenship       String
+    faculty           String
+    speciality        String
+    profile           String
+    level_of_training String
+    form_learning     String
+    study_group       String
+    language          String
+
+    users User[]
+}
+
+model Course {
+    course_id   Int    @id @default(autoincrement())
+    name        String
+    plan_course String
+
+    participants CourseParticipants[]
+    teachers     CourseTeachers[]
+    userCourses  UserCourses[]
+}
+
+model CourseParticipants {
+    course_id Int
+    user_id   Int
+
+    course Course @relation(fields: [course_id], references: [course_id])
+    user   User   @relation(fields: [user_id], references: [user_id])
+
+    @@id([course_id, user_id])
+}
+
+model CourseTeachers {
+    course_id  Int
+    teacher_id Int
+
+    course  Course  @relation(fields: [course_id], references: [course_id])
+    teacher Teacher @relation(fields: [teacher_id], references: [teacher_id])
+
+    @@id([course_id, teacher_id])
+}
+
+model Teacher {
+    teacher_id Int    @id @default(autoincrement())
+    photo_url  String
+    department String
+    job_title  String
+    education  String
+
+    disciplines      TeacherDisciplines[]
+    advancedTraining TeacherAdvanced[]
+    teachingCourses  CourseTeachers[]
+}
+
+model TeacherDisciplines {
+    teacher_id    Int
+    discipline_id Int
+
+    teacher    Teacher    @relation(fields: [teacher_id], references: [teacher_id])
+    discipline Discipline @relation(fields: [discipline_id], references: [discipline_id])
+
+    @@id([teacher_id, discipline_id])
+}
+
+model TeacherAdvanced {
+    teacher_id  Int
+    advanced_id Int
+
+    teacher  Teacher  @relation(fields: [teacher_id], references: [teacher_id])
+    advanced Advanced @relation(fields: [advanced_id], references: [advanced_id])
+
+    @@id([teacher_id, advanced_id])
+}
+
+model Discipline {
+    discipline_id Int    @id @default(autoincrement())
+    name          String
+
+    teacherLinks TeacherDisciplines[]
+}
+
+model Advanced {
+    advanced_id Int    @id @default(autoincrement())
+    name        String
+    hours       Int
+    year        Int
+
+    teacherLinks TeacherAdvanced[]
+}
