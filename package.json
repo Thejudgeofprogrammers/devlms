@@ -1,0 +1,14 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "del": "python3 ./scripts/DeleteContainers.py",
+    "len": "./scripts/StringCounter.bash",
+    "word": "./scripts/WordFinder.bash"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

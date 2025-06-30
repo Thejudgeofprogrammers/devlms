@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable, InternalServerErrorException, MethodNotAllowedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateNewChatRequest, CreateNewChatResponse, GetMessagesRequest, GetMessagesResponse, SaveMessageRequest, SaveMessageResponse } from './dto';
 
 @Injectable()
 export class ChatService {
@@ -7,12 +8,46 @@ export class ChatService {
         private readonly prismaService: PrismaService,
     ) {}
 
-    async saveMessage() {
-        
+    async createNewChat(
+        payload: CreateNewChatRequest
+    ): Promise<CreateNewChatResponse> {
+        try {
+            throw new MethodNotAllowedException();
+        } catch (e) {
+            if (e instanceof HttpException) {
+                console.error(e);
+                throw e;
+            }
+            throw new InternalServerErrorException('Ошибка в функции createNewChat: ', e)
+        }        
     }
 
-    async getMessages() {
-        
+    async saveMessage(
+        payload: SaveMessageRequest
+    ): Promise<SaveMessageResponse> {
+        try {
+            throw new MethodNotAllowedException();
+        } catch (e) {
+            if (e instanceof HttpException) {
+                console.error(e);
+                throw e;
+            }
+            throw new InternalServerErrorException('Ошибка в функции saveMessage: ', e)
+        }
+    }
+
+    async getMessages(
+        payload: GetMessagesRequest
+    ): Promise<GetMessagesResponse> {
+        try {
+            throw new MethodNotAllowedException();
+        } catch (e) {
+            if (e instanceof HttpException) {
+                console.error(e);
+                throw e;
+            }
+            throw new InternalServerErrorException('Ошибка в функции getMessages: ', e)
+        }
     }
 }
 

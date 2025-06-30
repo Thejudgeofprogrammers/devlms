@@ -1,4 +1,3 @@
-// chat.gateway.ts
 import {
     WebSocketGateway,
     SubscribeMessage,
@@ -17,18 +16,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     constructor(private readonly chatService: ChatService) { }
 
-    handleConnection(client: Socket) {
+    async handleConnection(client: Socket) {
         console.log(`Client connected: ${client.id}`);
     }
 
-    handleDisconnect(client: Socket) {
+    async handleDisconnect(client: Socket) {
         console.log(`Client disconnected: ${client.id}`);
     }
 
     @SubscribeMessage('message')
-    handleMessage(
+    async handleMessage(
         @MessageBody() message: { user: string; text: string },
-    ): void {
+    ): Promise<void> {
         console.log('message received:', message);
 
         this.server.emit('message', {
