@@ -1,0 +1,53 @@
+services:
+  postgres_server:
+    image: postgres:latest
+    container_name: postgres_server
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=tasks
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/postgres_data:/var/lib/postgresql/data
+    networks:
+      - cust_network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./data/redis_data:/data
+    networks:
+      - cust_network
+
+  mongodb:
+    image: mongo:5.0
+    container_name: mongo_db
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    volumes:
+      - ./data/mongodb_data:/data/db
+      - ./data/common/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./configs/mongod.conf:/etc/mongod.conf:ro
+    networks:
+      - cust_network
+    
+volumes:
+  postgres_data:
+  redis_data:
+  mongodb_data:
+    driver: local
+
+networks:
+  cust_network:
+    driver: bridge
