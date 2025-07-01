@@ -53,3 +53,19 @@ export class RegisterUserResponse {
     @IsNumber()
     status: number;
 }
+
+export class LogoutUserResponseDTO {
+  @IsString()
+  message: string;
+
+  @IsNumber()
+  status: number;
+}
+
+export class LogoutUserRequestDTO {
+  @IsNumber()
+  userId: number;
+
+  @IsString()
+  jwtToken: string;
+}

@@ -1,5 +1,5 @@
-import { BadRequestException, HttpException, Injectable, InternalServerErrorException, MethodNotAllowedException, UnauthorizedException } from '@nestjs/common';
-import { LoginFormDTO, LoginUserDTO, LoginUserResponse, RegisterUserDTO, RegisterUserResponse, validationResponse } from './dto';
+import { BadRequestException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, MethodNotAllowedException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { LoginFormDTO, LoginUserDTO, LoginUserResponse, LogoutUserRequestDTO, LogoutUserResponseDTO, RegisterUserDTO, RegisterUserResponse, validationResponse } from './dto';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import { HashService } from '../hash/hash.service';
@@ -72,6 +72,33 @@ export class AuthService {
             throw new InternalServerErrorException(e);
         }
     }
+
+    async logout(data: LogoutUserRequestDTO): Promise<LogoutUserResponseDTO> {
+        try {
+            const { userId, jwtToken } = data;
+            const payload = await this.redisService.getUserSession({ userId });
+            if (!payload) {
+                throw new NotFoundException('Not found jwtToken');
+            }
+
+            if (jwtToken !== payload.jwtToken) {
+                throw new ForbiddenException('Have not permission for this operation');
+            }
+
+            const { message, status } = await this.redisService.deleteUserSession({
+                userId,
+            });
+
+            if (!message || !status) {
+                throw new InternalServerErrorException('Server panic');
+            }
+
+            return { message, status };
+        } catch (e) {
+            throw new InternalServerErrorException('Server panic');
+        }
+    }
+
 
     public validation(payload: LoginFormDTO): validationResponse {
         const { data, password } = payload;

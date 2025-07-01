@@ -13,10 +13,3 @@ export class MessageDTO {
     @IsDate()
     createdAt: Date;
 }
-
-export class sendMessageToLLMRequest {
-    messages: MessageDTO[]
-    
-    @IsString()
-    chatId: string;
-}

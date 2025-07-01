@@ -10,6 +10,7 @@ import { SessionMiddlewareModule } from '../middlewares/sessionMiddleware/sessio
 import { PrismaModule } from './prisma/prisma.module';
 import { CourseModule } from './course/course.module';
 import { PhotoModule } from './photo/photo.module';
+import { TeachersModule } from './teachers/teachers.module';
 
 @Module({
     imports: [
@@ -27,6 +28,7 @@ import { PhotoModule } from './photo/photo.module';
         PrismaModule,
         CourseModule,
         PhotoModule,
+        TeachersModule,
     ],
     controllers: [],
     providers: [],
