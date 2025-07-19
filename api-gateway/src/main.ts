@@ -1,13 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app.module';
 import { ConfigService } from '@nestjs/config';
-import cookieParser from 'cookie-parser';
+import * as cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
-    app.setGlobalPrefix('api');
+
+    app.enableCors({
+        origin: ['http://localhost:5173', 'http://localhost:5174'],
+        credentials: true,
+        allowedHeaders: ['Authorization', 'Content-Type'],
+    });
+
     app.use(cookieParser());
+
+    app.setGlobalPrefix('api');
 
     const config = new DocumentBuilder()
         .setTitle('Api-gateway lms system')

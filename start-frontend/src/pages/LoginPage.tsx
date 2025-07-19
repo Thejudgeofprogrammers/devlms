@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "../styles/Auth.css";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [payload, setPayload] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -13,11 +11,13 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ data: payload, password }),
+        credentials: "include",
       });
+      
 
       if (!response.ok) {
         const data = await response.json();
@@ -26,8 +26,12 @@ export default function LoginPage() {
       }
 
       const data = await response.json();
-      localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+
+      localStorage.setItem("Authorization", `Bearer ${data.jwtToken}`);
+      localStorage.setItem("userId", data.userId.toString());
+
+      // Редирект
+      window.location.href = `http://localhost:5174/?token=${data.jwtToken}&userId=${data.userId}`;
     } catch (err) {
       setError("Сервер недоступен");
     }
@@ -38,10 +42,10 @@ export default function LoginPage() {
       <h2>Вход</h2>
       <form onSubmit={handleLogin}>
         <input
-          type="email"
-          placeholder="Электронная почта"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Электронная почта / Логин / Телефон"
+          value={payload}
+          onChange={(e) => setPayload(e.target.value)}
           required
         />
         <input
@@ -54,7 +58,7 @@ export default function LoginPage() {
         {error && <div className="error">{error}</div>}
         <button type="submit">Войти</button>
       </form>
-      <p className="auth-link" onClick={() => navigate("/register")}>
+      <p className="auth-link" onClick={() => (window.location.href = "/register")}>
         Нет аккаунта? Зарегистрироваться →
       </p>
     </div>

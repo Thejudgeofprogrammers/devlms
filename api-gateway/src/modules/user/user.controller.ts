@@ -2,11 +2,34 @@ import { BadRequestException, Body, Controller, Delete, Get, MethodNotAllowedExc
 import { UserService } from './user.service';
 import { Contacts, Course, User, UserCourses, UserFriends, UserInfo } from '@prisma/client';
 import { ResponseDTO } from './dto';
+import { PrismaService } from '../prisma/prisma.service';
+
+type ProfileUpdatePayload = {
+    userInfo?: Partial<{
+      name: string;
+      fam: string;
+      surname: string;
+      citizenship: string;
+      faculty: string;
+      speciality: string;
+      profile: string;
+      level_of_training: string;
+      form_learning: string;
+      study_group: string;
+      language: string;
+    }>;
+    contacts?: Partial<{
+      country: string;
+      city: string;
+      time_zone: string;
+    }>;
+};
 
 @Controller('users')
 export class UserController {
     constructor(
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly prisma: PrismaService,
     ) { }
 
     @Get(':user_id')
@@ -16,7 +39,8 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        const user = await this.userService.findUserById(userId);
+        const id = Number(userId);
+        const user = await this.userService.findUserById(id);
         if (!user) {
             throw new NotFoundException()
         }
@@ -31,7 +55,8 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        return await this.userService.getUserInfo(userId);
+        const id = Number(userId);
+        return await this.userService.getUserInfo(id);
     }
 
     @Get(':user_id/contacts')
@@ -41,7 +66,8 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        return await this.userService.getUserContacts(userId);
+        const id = Number(userId);
+        return await this.userService.getUserContacts(id);
     }
 
     @Get(':user_id/friends')
@@ -51,7 +77,8 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        return await this.userService.getUserFriends(userId);
+        const id = Number(userId);
+        return await this.userService.getUserFriends(id);
     }
 
     @Get(':user_id/courses')
@@ -61,20 +88,51 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        return await this.userService.getUserCourses(userId);
+        const id = Number(userId);
+        return await this.userService.getUserCourses(id);
     }
 
     @Put(':user_id/profile')
     async updateByIdProfile(
-        @Param('user_id') userId: number,
-        @Body() payload: any,
+      @Param('user_id') userId: string,
+      @Body() payload: ProfileUpdatePayload,
     ): Promise<ResponseDTO> {
-        if (!userId || !payload) {
-            throw new BadRequestException();
-        }
+      if (!payload || ( !payload.userInfo && !payload.contacts )) {
+        throw new BadRequestException('Payload must contain userInfo or contacts data');
+      }
+    
+      const id = Number(userId);
+      if (isNaN(id)) {
+        throw new BadRequestException('Invalid user_id');
+      }
+    
+      const user = await this.prisma.user.findUnique({
+        where: { user_id: id },
+        select: { user_info_id: true, contacts_id: true },
+      });
+    
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+    
+      if (payload.userInfo) {
+        await this.prisma.userInfo.update({
+          where: { user_info_id: user.user_info_id },
+          data: payload.userInfo,
+        });
+      }
 
-        // Проверка
-        throw new MethodNotAllowedException()
+      if (payload.contacts) {
+        await this.prisma.contacts.update({
+          where: { contact_id: user.contacts_id },
+          data: payload.contacts,
+        });
+      }
+    
+      return {
+        status: 200,
+        message: 'User profile updated',
+      };
     }
 
     @Put(':user_id/profile/advanced')

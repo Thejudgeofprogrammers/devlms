@@ -4,8 +4,10 @@ import "../styles/Auth.css";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+
+  const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -14,10 +16,15 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const response = await fetch("/api/register", {
+      const response = await fetch("http://localhost:4000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, fullName, password }),
+        body: JSON.stringify({
+          login,
+          email,
+          phoneNumber,
+          password,
+        }),
       });
 
       if (!response.ok) {
@@ -38,9 +45,9 @@ export default function RegisterPage() {
       <form onSubmit={handleRegister}>
         <input
           type="text"
-          placeholder="ФИО"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Логин"
+          value={login}
+          onChange={(e) => setLogin(e.target.value)}
           required
         />
         <input
@@ -48,6 +55,13 @@ export default function RegisterPage() {
           placeholder="Электронная почта"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Номер телефона"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
           required
         />
         <input

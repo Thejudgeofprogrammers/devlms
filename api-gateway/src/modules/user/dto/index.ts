@@ -7,3 +7,4 @@ export class ResponseDTO {
     @IsNumber()
     status: number;
 }
+

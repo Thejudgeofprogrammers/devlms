@@ -18,15 +18,12 @@ export class SessionMiddleware implements NestMiddleware {
             }
 
             const jwtToken = authHeader.split(' ')[1];
-            const userId = req.cookies?.userId;
+
+            const { userId } = await this.redisService.getUserSession({ jwtToken })
+            console.log('Authorization header:', jwtToken);
 
             if (!userId) {
                 return res.status(401).json({ message: 'Unauthorized' });
-            }
-
-            const response = await this.redisService.getUserSession({ userId });
-            if (!response || response.jwtToken !== jwtToken) {
-                return res.status(401).json({ message: 'Unauthorized: Invalid token' });
             }
 
             next();

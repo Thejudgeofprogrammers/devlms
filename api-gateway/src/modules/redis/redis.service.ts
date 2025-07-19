@@ -35,7 +35,7 @@ export class RedisService {
                 throw new BadRequestException('Bad request');
             }
 
-            await this.redis.set(userId.toString(), jwtToken);
+            await this.redis.set(jwtToken, userId.toString());
 
             return { message: 'User session save', status: 200 };
         } catch (e) {
@@ -47,18 +47,21 @@ export class RedisService {
         data: GetUserSessionRequestDTO,
     ): Promise<GetUserSessionResponseDTO> {
         try {
-            const { userId } = data;
-            if (!userId) {
+            console.log('Йоу')
+            console.log('Redis data for token:', data);
+            console.log('Йоу')
+            const { jwtToken } = data;
+            if (!jwtToken) {
                 throw new BadRequestException('Bad request');
             }
 
-            const token = await this.redis.get(userId.toString());
+            const userId = await this.redis.get(jwtToken);
 
-            if (!token) {
+            if (!userId) {
                 throw new NotFoundException('Not found');
             }
 
-            return { userId, jwtToken: token };
+            return { userId: Number(userId), jwtToken };
         } catch (e) {
             throw new InternalServerErrorException('Redis shutdown');
         }

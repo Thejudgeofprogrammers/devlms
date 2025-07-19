@@ -136,3 +136,27 @@ body.dark .dropdown-menu {
 .drop-link {
   border-radius: 4px;
 }
+
+.logout-button {
+  color: #1e1e2f;
+  height: 40px;
+  margin-left: 16px;
+  text-align: left;
+  transition: color 0.3s ease;
+}
+
+.logout-button::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  background: #a78bfa;
+  bottom: -4px;
+  left: 0;
+  transition: width 0.3s ease;
+}
+
+.logout-button:hover,
+.logout-button.active {
+  color: #ff0000;
+}

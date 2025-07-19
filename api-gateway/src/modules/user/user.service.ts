@@ -152,6 +152,7 @@ export class UserService {
         try {
             return await fn();
         } catch (e) {
+            console.error(`Ошибка в функции ${context}:`, e);
             if (e instanceof HttpException) {
                 console.error(`HTTP ошибка в ${context}:`, e.message);
                 throw e;

@@ -7,5 +7,9 @@ export default () => ({
     redis: {
         port: parseInt(process.env.REDIS_PORT, 10) || 6379,
         host: process.env.REDIS_HOST,
+    },
+    admin: {
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD
     }
 });

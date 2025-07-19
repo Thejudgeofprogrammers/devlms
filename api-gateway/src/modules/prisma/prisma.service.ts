@@ -1,10 +1,15 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements
     OnModuleInit, OnModuleDestroy {
+
+    constructor(private readonly configService: ConfigService) {
+        super();
+    }
 
     async onModuleInit() {
         await this.$connect();
@@ -16,14 +21,15 @@ export class PrismaService extends PrismaClient implements
     }
 
     private async ensureAdminUser() {
-        const adminEmail = process.env.EMAIL_ADMIN
+        const adminEmail = this.configService.get<string>('admin.email');
 
         const admin = await this.user.findUnique({
             where: { email: adminEmail },
         });
 
         if (!admin) {
-            const hashedPassword = await bcrypt.hash('admin123', 10);
+            const password = this.configService.get<string>('admin.password')
+            const hashedPassword = await bcrypt.hash(password, 10);
 
             const role = await this.role.upsert({
                 where: { role_id: 1 },

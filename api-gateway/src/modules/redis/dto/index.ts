@@ -17,8 +17,8 @@ export class SaveUserSessionResponseDTO {
 }
 
 export class GetUserSessionRequestDTO {
-  @IsNumber()
-  userId: number;
+  @IsString()
+  jwtToken: string;
 }
 
 export class GetUserSessionResponseDTO {

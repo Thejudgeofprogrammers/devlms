@@ -20,7 +20,7 @@ export class AuthController {
     async loginUser(
         @Body() payload: LoginFormDTO,
         @Res() res: Response,
-    ): Promise<LoginUserResponse> {
+    ): Promise<void> {
         const validation = this.authService.validation(payload);
 
         const { jwtToken, userId } = await this.authService.loginUser({
@@ -32,10 +32,7 @@ export class AuthController {
         res.cookie('userId', userId.toString(), myOptionalCookieOptions);
         res.setHeader('Authorization', `Bearer ${jwtToken}`);
 
-        return {
-            jwtToken,
-            userId,
-        }
+        res.json({ jwtToken, userId });
     }
 
     @Post('register')

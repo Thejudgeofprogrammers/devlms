@@ -76,12 +76,12 @@ export class AuthService {
     async logout(data: LogoutUserRequestDTO): Promise<LogoutUserResponseDTO> {
         try {
             const { userId, jwtToken } = data;
-            const payload = await this.redisService.getUserSession({ userId });
+            const payload = await this.redisService.getUserSession({ jwtToken });
             if (!payload) {
                 throw new NotFoundException('Not found jwtToken');
             }
 
-            if (jwtToken !== payload.jwtToken) {
+            if (userId.toString() !== payload.userId.toString()) {
                 throw new ForbiddenException('Have not permission for this operation');
             }
 

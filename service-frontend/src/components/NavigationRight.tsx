@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import profileIcon from "../../public/reshot-icon-profile-avatar-QKH4XD2YFV.svg"; 
 import settingsIcon from "../../public/reshot-icon-settings-RQMZTY9CK2.svg";
@@ -12,6 +12,7 @@ export function NavigationRight() {
   const settingsRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
   const chatsRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -30,6 +31,26 @@ export function NavigationRight() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleLogout = async () => {
+    const token = localStorage.getItem("Authorization");
+  
+    try {
+      await fetch("http://localhost:4000/api/users/logout", {
+        method: "POST",
+        headers: {
+          Authorization: token || "",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+    } catch (e) {
+      console.error("Ошибка при logout", e);
+    } finally {
+      localStorage.clear();
+      window.location.href = "http://localhost:5173/";
+    }
+  };
 
   return (
     <div className="nav-right">
@@ -74,7 +95,14 @@ export function NavigationRight() {
           <div className="dropdown-menu">
             <NavLink to="/profile" className="drop-link">Мой профиль</NavLink>
             <NavLink to="/friends" className="drop-link">Друзья</NavLink>
-            <NavLink to="/logout" className="drop-link">Выйти</NavLink>
+            <button
+  type="button"
+  className="drop-link logout-button"
+  onClick={handleLogout}
+  style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+>
+  Выйти
+</button>
           </div>
         )}
       </div>
