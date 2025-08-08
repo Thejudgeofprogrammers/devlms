@@ -8,13 +8,13 @@ import { RedisService } from '../../modules/redis/redis.service';
     providers: [SessionMiddleware, RedisService],
 })
 export class SessionMiddlewareModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(SessionMiddleware)
-            .exclude(
-                { path: '/api/auth/login', method: RequestMethod.POST },
-                { path: '/api/auth/register', method: RequestMethod.POST },
-            )
-            .forRoutes('*');
-    }
+    // configure(consumer: MiddlewareConsumer) {
+    //     consumer
+    //         .apply(SessionMiddleware)
+    //         .exclude(
+    //             { path: '/api/auth/login', method: RequestMethod.POST },
+    //             { path: '/api/auth/register', method: RequestMethod.POST },
+    //         )
+    //         .forRoutes('*');
+    // }
 }

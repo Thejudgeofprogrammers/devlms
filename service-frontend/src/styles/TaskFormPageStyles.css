@@ -1,0 +1,68 @@
+/* файл: TaskFormPageStyles.css */
+
+.task-form-page {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 1px solid #d1d5db22;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.task-form-page h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.task-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.task-input,
+.task-textarea {
+  margin-top: 0.5rem;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  resize: vertical;
+  min-height: 40px;
+  max-width: 100%;
+  min-width: 700px;
+  box-sizing: border-box;
+}
+
+.task-textarea {
+  min-height: 80px;
+}
+
+.task-button {
+  align-self: flex-start;
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+  border: none;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.task-button:hover {
+  opacity: 0.9;
+}

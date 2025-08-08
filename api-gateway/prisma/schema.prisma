@@ -94,6 +94,18 @@ model Course {
     participants CourseParticipants[]
     teachers     CourseTeachers[]
     userCourses  UserCourses[]
+
+    tasks Task[]
+}
+
+model Task {
+    task_id     Int       @id @default(autoincrement())
+    title       String
+    description String?
+    deadline    DateTime?
+
+    course_id Int
+    course    Course @relation(fields: [course_id], references: [course_id])
 }
 
 model CourseParticipants {
@@ -118,7 +130,7 @@ model CourseTeachers {
 
 model Teacher {
     teacher_id Int    @id @default(autoincrement())
-    photo_url  String
+    photo_url  String?
     department String
     job_title  String
     education  String

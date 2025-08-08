@@ -1,29 +1,8 @@
-import { BadRequestException, Body, Controller, Delete, Get, MethodNotAllowedException, NotFoundException, Param, Put } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, MethodNotAllowedException, NotFoundException, Param, Patch, Put } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Contacts, Course, User, UserCourses, UserFriends, UserInfo } from '@prisma/client';
-import { ResponseDTO } from './dto';
+import { Contacts, Course, User, UserFriends, UserInfo } from '@prisma/client';
+import { ProfileUpdatePayload, ResponseDTO } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
-
-type ProfileUpdatePayload = {
-    userInfo?: Partial<{
-      name: string;
-      fam: string;
-      surname: string;
-      citizenship: string;
-      faculty: string;
-      speciality: string;
-      profile: string;
-      level_of_training: string;
-      form_learning: string;
-      study_group: string;
-      language: string;
-    }>;
-    contacts?: Partial<{
-      country: string;
-      city: string;
-      time_zone: string;
-    }>;
-};
 
 @Controller('users')
 export class UserController {
@@ -32,9 +11,27 @@ export class UserController {
         private readonly prisma: PrismaService,
     ) { }
 
+    @Patch(':user_id/role')
+    async updateRoler(@Param('user_id') user_id: string, @Body('role') role: string): Promise<ResponseDTO> {
+        return await this.userService.updateRolerById(Number(user_id), role)
+    }
+
+    @Get('')
+    async getUsers() {
+        return await this.userService.getUsersWithoutPassword();
+    }
+
+    @Get(':user_id/role')
+    async getRole(@Param('user_id') userId: string): Promise<string> {
+        const id = Number(userId)
+        const user = await this.userService.findUserById(id)
+        const role = await this.userService.findUserRole(user.role_id)
+        return role.role
+    }
+
     @Get(':user_id')
     async getUserById(
-        @Param('user_id') userId: number,
+        @Param('user_id') userId: string,
     ): Promise<Omit<User, 'password'>> {
         if (!userId) {
             throw new BadRequestException();
@@ -50,7 +47,7 @@ export class UserController {
 
     @Get(':user_id/detal')
     async getUserByIdDetals(
-        @Param('user_id') userId: number,
+        @Param('user_id') userId: string,
     ): Promise<UserInfo> {
         if (!userId) {
             throw new BadRequestException();
@@ -61,7 +58,7 @@ export class UserController {
 
     @Get(':user_id/contacts')
     async getUserByIdContacts(
-        @Param('user_id') userId: number,
+        @Param('user_id') userId: string,
     ): Promise<Contacts> {
         if (!userId) {
             throw new BadRequestException();
@@ -72,7 +69,7 @@ export class UserController {
 
     @Get(':user_id/friends')
     async getUserByIdFriends(
-        @Param('user_id') userId: number,
+        @Param('user_id') userId: string,
     ): Promise<UserFriends[]> {
         if (!userId) {
             throw new BadRequestException();
@@ -83,7 +80,7 @@ export class UserController {
 
     @Get(':user_id/courses')
     async getUserByIdCourses(
-        @Param('user_id') userId: number,
+        @Param('user_id') userId: string,
     ): Promise<Course[]> {
         if (!userId) {
             throw new BadRequestException();
@@ -94,59 +91,51 @@ export class UserController {
 
     @Put(':user_id/profile')
     async updateByIdProfile(
-      @Param('user_id') userId: string,
-      @Body() payload: ProfileUpdatePayload,
+        @Param('user_id') userId: string,
+        @Body() payload: ProfileUpdatePayload,
     ): Promise<ResponseDTO> {
-      if (!payload || ( !payload.userInfo && !payload.contacts )) {
-        throw new BadRequestException('Payload must contain userInfo or contacts data');
-      }
-    
-      const id = Number(userId);
-      if (isNaN(id)) {
-        throw new BadRequestException('Invalid user_id');
-      }
-    
-      const user = await this.prisma.user.findUnique({
-        where: { user_id: id },
-        select: { user_info_id: true, contacts_id: true },
-      });
-    
-      if (!user) {
-        throw new NotFoundException('User not found');
-      }
-    
-      if (payload.userInfo) {
-        await this.prisma.userInfo.update({
-          where: { user_info_id: user.user_info_id },
-          data: payload.userInfo,
-        });
-      }
+        if (!payload || (!payload.userInfo && !payload.contacts)) {
+            throw new BadRequestException('Payload must contain userInfo or contacts data');
+        }
 
-      if (payload.contacts) {
-        await this.prisma.contacts.update({
-          where: { contact_id: user.contacts_id },
-          data: payload.contacts,
-        });
-      }
-    
-      return {
-        status: 200,
-        message: 'User profile updated',
-      };
-    }
+        const id = Number(userId);
+        if (isNaN(id)) {
+            throw new BadRequestException('Invalid user_id');
+        }
 
-    @Put(':user_id/profile/advanced')
-    async updateByIdTeacherInfo(
-        @Param('user_id') userId: number,
-        @Body() payload: any,
-    ): Promise<ResponseDTO> {
-        throw new MethodNotAllowedException()
+        const user = await this.prisma.user.findUnique({
+            where: { user_id: id },
+            select: { user_info_id: true, contacts_id: true },
+        });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        if (payload.userInfo) {
+            await this.prisma.userInfo.update({
+                where: { user_info_id: user.user_info_id },
+                data: payload.userInfo,
+            });
+        }
+
+        if (payload.contacts) {
+            await this.prisma.contacts.update({
+                where: { contact_id: user.contacts_id },
+                data: payload.contacts,
+            });
+        }
+
+        return {
+            status: 200,
+            message: 'User profile updated',
+        };
     }
 
     @Delete(':user_id')
     async deleteById(
-        @Param('user_id') userId: number,
+        @Param('user_id') userId: string,
     ): Promise<ResponseDTO> {
-        throw new MethodNotAllowedException()
+        return await this.userService.deleteUserById(Number(userId))
     }
 }

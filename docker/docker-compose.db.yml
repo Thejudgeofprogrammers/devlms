@@ -34,11 +34,10 @@ services:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_ROOT_PASSWORD: secret
     volumes:
       - ./data/mongodb_data:/data/db
       - ./data/common/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./configs/mongod.conf:/etc/mongod.conf:ro
     networks:
       - cust_network
     

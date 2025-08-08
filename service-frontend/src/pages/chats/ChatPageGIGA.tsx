@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../styles/ChatPageGIGA.css';
+import '../../styles/ChatPageGIGA.css';
 
 export default function ChatPageGIGA() {
   const [messages, setMessages] = useState<{ sender: 'user' | 'bot'; text: string }[]>([]);

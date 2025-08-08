@@ -13,11 +13,24 @@ export class PrismaService extends PrismaClient implements
 
     async onModuleInit() {
         await this.$connect();
+        await this.createRoles();
         await this.ensureAdminUser();
     }
 
     async onModuleDestroy() {
         await this.$disconnect();
+    }
+
+    private async createRoles() {
+        await this.role.createMany({
+            data: [
+                { role: 'Admin' },
+                { role: 'Teacher' },
+                { role: 'User' }
+            ],
+            skipDuplicates: true
+        });
+        console.log('✅ Роли создались');
     }
 
     private async ensureAdminUser() {

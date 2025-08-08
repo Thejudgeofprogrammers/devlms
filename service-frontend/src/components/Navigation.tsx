@@ -12,6 +12,7 @@ export function Navigation() {
             </NavLink>
             <NavLink to="/" className="nav-link">Мои курсы</NavLink>
             <NavLink to="/teachers" className="nav-link">О преподавателях</NavLink>
+            <NavLink to="/users" className="nav-link">Пользователи</NavLink>
         </div>
             <NavigationRight />
         </nav>

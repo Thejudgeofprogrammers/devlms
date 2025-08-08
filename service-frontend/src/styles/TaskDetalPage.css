@@ -1,0 +1,70 @@
+.task-detail-page {
+    padding: 2rem;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.task-detail-page h1 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    color: #fff;
+}
+
+.task-detail-page p {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid #d1d5db22;
+    border-radius: 12px;
+    padding: 1rem;
+    color: #fff;
+    margin-bottom: 0.75rem;
+}
+
+.task-detail-page a,
+.task-detail-page button {
+    margin-bottom: 1rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: opacity .2s;
+}
+
+.task-detail-page a:hover,
+.task-detail-page button:hover {
+    opacity: 0.85;
+}
+
+.task-detail-page .deadline {
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.teacher-info {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.info-row {
+    display: flex;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.label {
+    font-weight: bold;
+    color: #ffffff;
+    min-width: 120px;
+}
+
+.value {
+    color: #ffffff;
+}

@@ -1,5 +1,5 @@
-import '../styles/ChatListPage.css';
-import { aiChats, userChats } from './mock';
+import '../../styles/ChatListPage.css';
+import { aiChats, userChats } from '../mock';
 
 export default function ChatListPage() {
   return (

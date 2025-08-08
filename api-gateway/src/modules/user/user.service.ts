@@ -4,6 +4,7 @@ import { RegisterUserDTO, RegisterUserResponse } from '../auth/dto';
 import { StatusClient } from 'src/common/status';
 import { PrismaService } from '../prisma/prisma.service';
 import { HashService } from '../hash/hash.service';
+import { ResponseDTO } from './dto';
 
 @Injectable()
 export class UserService {
@@ -11,6 +12,58 @@ export class UserService {
         private readonly prisma: PrismaService,
         private readonly hashService: HashService,
     ) { }
+
+    async deleteUserById(user_id: number): Promise<ResponseDTO> {
+        try {
+            const user = await this.prisma.user.findUnique({ where: { user_id }})
+            if (!user) {
+                throw new NotFoundException()
+            }
+
+            await this.prisma.user.delete({ where: { user_id }})
+            return { message: 'Пользователь удалён', status: 200 }
+        } catch (e) {
+            console.error("DeleteError user", e);
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    async updateRolerById(user_id: number, role: string): Promise<ResponseDTO> {
+        try {
+            const user = await this.prisma.user.findUnique({ where: { user_id } });
+            if (!user) throw new NotFoundException('Пользователь не найден');
+
+            const newRole = await this.prisma.role.findFirst({
+                where: { role: { equals: role, mode: 'insensitive' } }
+            });
+            if (!newRole) throw new NotFoundException('Роль не найдена');
+
+            await this.prisma.user.update({
+                where: { user_id },
+                data: { role_id: newRole.role_id }
+            });
+
+            return { message: 'Роль изменена', status: 200 };
+        } catch (e) {
+            console.error("UpdateError role", e);
+            throw new InternalServerErrorException(e);
+        }
+    }
+
+    async getUsersWithoutPassword() {
+        return this.prisma.user.findMany({
+            select: {
+                user_id: true,
+                email: true,
+                phone_number: true,
+                role: {
+                    select: {
+                        role: true,
+                    }
+                }
+            }
+        });
+    }
 
     async findUserById(userId: number): Promise<User> {
         return this.withTryCatch(() => this.getUserOrThrow(userId), 'findUserById');
