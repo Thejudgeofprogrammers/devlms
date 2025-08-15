@@ -5,6 +5,8 @@ import { StatusClient } from 'src/common/status';
 import { PrismaService } from '../prisma/prisma.service';
 import { HashService } from '../hash/hash.service';
 import { ResponseDTO } from './dto';
+import { join } from 'path';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -15,12 +17,25 @@ export class UserService {
 
     async deleteUserById(user_id: number): Promise<ResponseDTO> {
         try {
-            const user = await this.prisma.user.findUnique({ where: { user_id }})
+            const user = await this.prisma.user.findUnique({ where: { user_id: Number(user_id) } })
             if (!user) {
                 throw new NotFoundException()
             }
 
-            await this.prisma.user.delete({ where: { user_id }})
+            const filePath = join(process.cwd(), 'uploads', 'users', `${user_id}.jpg`)
+
+            if (filePath) {
+                try {
+                    await fs.access(filePath);
+                    await fs.unlink(filePath);
+                } catch (err) {
+                    if (err.code !== 'ENOENT') {
+                        throw err;
+                    }
+                }
+            }
+
+            await this.prisma.user.delete({ where: { user_id: Number(user_id) } })
             return { message: 'Пользователь удалён', status: 200 }
         } catch (e) {
             console.error("DeleteError user", e);
@@ -30,7 +45,7 @@ export class UserService {
 
     async updateRolerById(user_id: number, role: string): Promise<ResponseDTO> {
         try {
-            const user = await this.prisma.user.findUnique({ where: { user_id } });
+            const user = await this.prisma.user.findUnique({ where: { user_id: Number(user_id) } });
             if (!user) throw new NotFoundException('Пользователь не найден');
 
             const newRole = await this.prisma.role.findFirst({
@@ -39,7 +54,7 @@ export class UserService {
             if (!newRole) throw new NotFoundException('Роль не найдена');
 
             await this.prisma.user.update({
-                where: { user_id },
+                where: { user_id: Number(user_id) },
                 data: { role_id: newRole.role_id }
             });
 
@@ -51,7 +66,7 @@ export class UserService {
     }
 
     async getUsersWithoutPassword() {
-        return this.prisma.user.findMany({
+        return await this.prisma.user.findMany({
             select: {
                 user_id: true,
                 email: true,
@@ -65,12 +80,43 @@ export class UserService {
         });
     }
 
+    async getUserWithoutPassword(user_id: number) {
+        return await this.prisma.user.findUnique({
+            where: { user_id: Number(user_id) },
+            select: {
+                user_id: true,
+                email: true,
+                phone_number: true,
+                role: {
+                    select: {
+                        role: true,
+                    }
+                }
+            }
+        });
+    }
+
+    async getUserWithoutPasswordByEmail(email: string) {
+        try {
+            const user = await this.prisma.user.findUnique({
+                where: { email },
+            });
+
+            delete user.password
+
+            return user
+        } catch (e) {
+            throw new InternalServerErrorException(e)
+        }
+    }
+
     async findUserById(userId: number): Promise<User> {
-        return this.withTryCatch(() => this.getUserOrThrow(userId), 'findUserById');
+        const user_id = Number(userId)
+        return await this.withTryCatch(() => this.getUserOrThrow(user_id), 'findUserById');
     }
 
     async findUserByEmail(email: string): Promise<User> {
-        return this.withTryCatch(async () => {
+        return await this.withTryCatch(async () => {
             const user = await this.prisma.user.findUnique({ where: { email } });
             if (!user) throw new NotFoundException();
             return user;
@@ -78,7 +124,7 @@ export class UserService {
     }
 
     async findUserByLogin(login: string): Promise<User> {
-        return this.withTryCatch(async () => {
+        return await this.withTryCatch(async () => {
             const user = await this.prisma.user.findUnique({ where: { login } });
             if (!user) throw new NotFoundException();
             return user;
@@ -87,7 +133,7 @@ export class UserService {
 
 
     async findUserByPhone(phoneNumber: string): Promise<User> {
-        return this.withTryCatch(async () => {
+        return await this.withTryCatch(async () => {
             const user = await this.prisma.user.findUnique({ where: { phone_number: phoneNumber } });
             if (!user) throw new NotFoundException();
             return user;
@@ -95,39 +141,38 @@ export class UserService {
     }
 
     async findUserRole(userId: number): Promise<Role> {
-        return this.withTryCatch(async () => {
-            const user = await this.getUserOrThrow(userId);
-            const role = await this.prisma.role.findUnique({ where: { role_id: user.role_id } });
-            return role;
-        }, 'findUserRole');
+        const user = await this.getUserOrThrow(userId);
+        const role = await this.prisma.role.findUnique({ where: { role_id: user.role_id } });
+        if (!role) throw new NotFoundException(`Роль для пользователя ${userId} не найдена`);
+        return role;
     }
 
     async getUserInfo(userId: number): Promise<UserInfo> {
-        return this.withTryCatch(async () => {
-            const user = await this.getUserOrThrow(userId);
+        return await this.withTryCatch(async () => {
+            const user = await this.getUserOrThrow(Number(userId));
             return this.prisma.userInfo.findUnique({ where: { user_info_id: user.user_info_id } });
         }, 'getUserInfo');
     }
 
     async getUserContacts(userId: number): Promise<Contacts> {
-        return this.withTryCatch(async () => {
-            const user = await this.getUserOrThrow(userId);
+        return await this.withTryCatch(async () => {
+            const user = await this.getUserOrThrow(Number(userId));
             return this.prisma.contacts.findUnique({ where: { contact_id: user.contacts_id } });
         }, 'getUserContacts');
     }
 
     async getUserFriends(userId: number): Promise<UserFriends[]> {
-        return this.withTryCatch(async () => {
-            await this.getUserOrThrow(userId);
-            return this.prisma.userFriends.findMany({ where: { user_id: userId } });
+        return await this.withTryCatch(async () => {
+            await this.getUserOrThrow(Number(userId));
+            return this.prisma.userFriends.findMany({ where: { user_id: Number(userId) } });
         }, 'getUserFriends');
     }
 
     async getUserCourses(userId: number): Promise<Course[]> {
-        return this.withTryCatch(async () => {
-            await this.getUserOrThrow(userId);
+        return await this.withTryCatch(async () => {
+            await this.getUserOrThrow(Number(userId));
             const userCourses = await this.prisma.userCourses.findMany({
-                where: { user_id: userId },
+                where: { user_id: Number(userId) },
                 include: { course: true },
             });
             return userCourses.map((uc) => uc.course);
@@ -196,7 +241,7 @@ export class UserService {
     }
 
     private async getUserOrThrow(userId: number): Promise<User> {
-        const user = await this.prisma.user.findUnique({ where: { user_id: userId } });
+        const user = await this.prisma.user.findUnique({ where: { user_id: Number(userId) } });
         if (!user) throw new NotFoundException(`Пользователь с id ${userId} не найден`);
         return user;
     }

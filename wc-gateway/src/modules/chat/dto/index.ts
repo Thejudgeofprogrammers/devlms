@@ -1,59 +1,47 @@
-import { Message } from 'prisma/generated/mongodb';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateNewChatResponse {
     @IsString()
-    chat_id: string;
-
-    @IsNumber()
-    owner: number;
-
-    message: Message;
-
-    @IsDate()
+    chatId: string;
+    @IsString()
+    userId: string;
     createdAt: Date;
-    
-    @IsDate()
-    updatedAt: Date;
-}
-
-export class SaveMessageResponse {
-
-}
-
-export class GetMessagesResponse {
-
 }
 
 export class CreateNewChatRequest {
-
+    @IsString()
+    userId: string;
 }
 
 export class SaveMessageRequest {
-
+    @IsString()
+    chatId: string;
+    @IsString()
+    userId: string;
+    @IsString()
+    text: string;
+    @IsString()
+    owner: string;
 }
 
 export class GetMessagesRequest {
-
+    @IsString()
+    chatId: string;
 }
 
-// enum ChatType {
-//   bot
-//   user
-// }
+export class UpdateNameChatRequest {
+    @IsString()
+    chatId: string;
+    @IsString()
+    name: string;
+}
 
-// model Chat {
-//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-//   chat_type  ChatType
-//   owners     Int[]
-//   created_at DateTime @default(now())
-//   updated_at DateTime @updatedAt
-// }
+export class getChatByIdRequest {
+    @IsString()
+    chatId: string
+}
 
-// model Message {
-//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-//   chat_id    String
-//   owner      Int
-//   text       String
-//   created_at DateTime @default(now())
-// }
+export class DeleteChatByIdRequest {
+    @IsString()
+    chatId: string
+}

@@ -377,3 +377,16 @@ GET /api/teachers/:user_id
 Описание: Получить преподавателя
 
 ### WC
+
+
+
+
+
+
+
+
+docker exec -it mongo_db mongosh
+
+rs.initiate()
+
+rs.status()

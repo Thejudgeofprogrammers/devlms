@@ -113,38 +113,42 @@ export default function EditUserProfilePage() {
 
             <section className="profile-card">
                 <h2>🧾 Общая информация</h2>
-                {Object.entries(info).map(([key, value]) => (
-                    <div key={key} style={{ marginBottom: 8 }}>
-                        <label>
-                            <strong>{key}:</strong>{" "}
-                            <input
-                                name={key}
-                                value={value}
-                                onChange={handleInfoChange}
-                                style={{ width: "100%" }}
-                                required
-                            />
-                        </label>
-                    </div>
-                ))}
+                {Object.entries(info)
+                    .filter(([key]) => key !== "user_info_id")
+                    .map(([key, value]) => (
+                        <div key={key} style={{ marginBottom: 8 }}>
+                            <label>
+                                <strong>{key}:</strong>{" "}
+                                <input
+                                    name={key}
+                                    value={value}
+                                    onChange={handleInfoChange}
+                                    style={{ width: "100%" }}
+                                    required
+                                />
+                            </label>
+                        </div>
+                    ))}
             </section>
 
             <section className="profile-card">
                 <h2>📫 Контакты</h2>
-                {Object.entries(contacts).map(([key, value]) => (
-                    <div key={key} style={{ marginBottom: 8 }}>
-                        <label>
-                            <strong>{key}:</strong>{" "}
-                            <input
-                                name={key}
-                                value={value}
-                                onChange={handleContactsChange}
-                                style={{ width: "100%" }}
-                                required
-                            />
-                        </label>
-                    </div>
-                ))}
+                {Object.entries(contacts)
+                    .filter(([key]) => key !== "contact_id")
+                    .map(([key, value]) => (
+                        <div key={key} style={{ marginBottom: 8 }}>
+                            <label>
+                                <strong>{key}:</strong>{" "}
+                                <input
+                                    name={key}
+                                    value={value}
+                                    onChange={handleContactsChange}
+                                    style={{ width: "100%" }}
+                                    required
+                                />
+                            </label>
+                        </div>
+                    ))}
             </section>
 
             <button type="submit" style={{ marginTop: 20 }}>

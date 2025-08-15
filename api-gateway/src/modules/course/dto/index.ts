@@ -8,6 +8,14 @@ export class CreateCourseDto {
     plan_course: string;
 }
 
+export class UpdateCourseDto {
+    @IsString()
+    name: string;
+
+    @IsString()
+    plan_course: string;
+}
+
 export class ResponseCourse {
     @IsString()
     message: string;

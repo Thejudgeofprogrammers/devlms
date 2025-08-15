@@ -17,7 +17,7 @@ export default function LoginPage() {
         body: JSON.stringify({ data: payload, password }),
         credentials: "include",
       });
-      
+
 
       if (!response.ok) {
         const data = await response.json();
@@ -27,10 +27,12 @@ export default function LoginPage() {
 
       const data = await response.json();
 
+      localStorage.removeItem("Authorization");
+      localStorage.removeItem("userId");
+      
       localStorage.setItem("Authorization", `Bearer ${data.jwtToken}`);
       localStorage.setItem("userId", data.userId.toString());
 
-      // Редирект
       window.location.href = `http://localhost:5174/?token=${data.jwtToken}&userId=${data.userId}`;
     } catch (err) {
       setError("Сервер недоступен");

@@ -1,1 +1,3 @@
 /docker/data
+/wc-gateway/prisma/generated
+wc-gateway/prisma/generated

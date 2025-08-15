@@ -10,7 +10,7 @@ import ChatPageGIGA from "./pages/chats/ChatPageGIGA";
 import ProfilePage from "./pages/ProfilePage";
 import ChatListPage from "./pages/chats/ChatListPage";
 import FriendsPage from "./pages/FriendsPage";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CreateCoursePage from "./pages/courses/CourceCreatePage";
 import TaskListPage from "./pages/tasks/TaskListPage";
 import TaskFormPage from "./pages/tasks/TaskFormPage";
@@ -19,8 +19,14 @@ import UserListPage from "./pages/UserListPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import EditUserProfilePage from "./pages/EditUserProfilePage";
 import CreateTeacherPage from "./pages/teachers/CreateTeacherPage";
+import EditTeacherPage from "./pages/teachers/EditTeacherPage";
+import { AdminRoute } from "./hooks/AdminRoute";
+import EditCoursePage from "./pages/courses/EditCoursePage";
+import CourseParticipantsPage from "./pages/courses/CourseParticipantsPage";
 
 export default function App() {
+  const [userId, setUserId] = useState<number | null>(null);
+
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
@@ -31,7 +37,7 @@ export default function App() {
       const cleanUrl = window.location.origin + window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
 
-      fetch(`http://localhost:4000/api/redis/session`, {
+      fetch("http://localhost:4000/api/redis/session", {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -47,15 +53,18 @@ export default function App() {
           return res.json();
         })
         .then((data) => {
-          const userId = data.userId || data;
-          if (userId) {
-            localStorage.setItem("userId", userId);
-            console.log("Получен userId:", userId);
+          const id = data.userId || data;
+          if (id) {
+            localStorage.setItem("userId", id);
+            setUserId(id);
           }
         })
         .catch((err) => {
           console.error("Ошибка получения userId:", err);
         });
+    } else {
+      const savedId = localStorage.getItem("userId");
+      if (savedId) setUserId(Number(savedId));
     }
   }, []);
 
@@ -73,16 +82,84 @@ export default function App() {
             <Route path="/chats" element={<ChatListPage />} />
             <Route path="/friends" element={<FriendsPage />} />
             <Route path="/chats/:id" element={<ChatPageGIGA />} />
-            <Route path="/create/course" element={<CreateCoursePage />} />
             <Route path="/courses/:course_id" element={<CourseDetailPage />} />
             <Route path="/courses/:course_id/tasks" element={<TaskListPage />} />
-            <Route path="/courses/:course_id/tasks/new" element={<TaskFormPage />} />
             <Route path="/courses/:course_id/tasks/:task_id" element={<TaskDetailPage />} />
-            <Route path="/courses/:course_id/tasks/:task_id/edit" element={<TaskFormPage />} />
-            <Route path="/users" element={<UserListPage />} />
             <Route path="/users/:id" element={<UserProfilePage />} />
-            <Route path="/users/:id/edit" element={<EditUserProfilePage />} />
-            <Route path="/teachers/create" element={<CreateTeacherPage />} />
+            <Route path="/courses/:course_id/participants" element={<CourseParticipantsPage />} />
+
+            <Route
+              path="/courses/:course_id/edit"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <EditCoursePage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/users"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <UserListPage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/create/course"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <CreateCoursePage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/courses/:course_id/tasks/new"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <TaskFormPage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/courses/:course_id/tasks/:task_id/edit"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <TaskFormPage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/users/:id/edit"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <EditUserProfilePage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/teachers/create"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <CreateTeacherPage />
+                </AdminRoute>
+              }
+            />
+
+            <Route
+              path="/teachers/:id/edit"
+              element={
+                <AdminRoute userId={Number(userId)}>
+                  <EditTeacherPage />
+                </AdminRoute>
+              }
+            />
+            <Route path="/unauthorized" element={<h1>🚫 Нет доступа</h1>} />
           </Routes>
         </main>
         <Footer />

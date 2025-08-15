@@ -3,28 +3,30 @@ generator client {
     output   = "./generated/mongodb"
 }
 
-datasource db  {
+datasource db {
     provider = "mongodb"
     url      = env("MONGODB_URL")
 }
 
-enum ChatType {
+enum TypePerson {
     bot
     user
 }
 
 model Chat {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-    chat_type  ChatType
-    owners     Int[]
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+    id         String    @id @default(auto()) @map("_id") @db.ObjectId
+    user_id    Int
+    name       String?
+    messages   Message[] @relation("ChatMessages")
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
 }
 
 model Message {
-    id String @id @default(auto()) @map("_id") @db.ObjectId
-    chat_id    String
-    owner      Int
+    id         String     @id @default(auto()) @map("_id") @db.ObjectId
+    chat_id    String     @db.ObjectId
+    chat       Chat       @relation("ChatMessages", fields: [chat_id], references: [id])
+    owner      TypePerson
     text       String
-    created_at DateTime @default(now())
+    created_at DateTime   @default(now())
 }

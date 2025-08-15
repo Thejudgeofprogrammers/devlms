@@ -32,20 +32,18 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: secret
     volumes:
-      - ./data/mongodb_data:/data/db
-      - ./data/common/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - mongodb_data:/data/db
+      - ../data/common/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     networks:
       - cust_network
+    command: ["--replSet", "rs0"]
     
 volumes:
   postgres_data:
   redis_data:
   mongodb_data:
-    driver: local
+
 
 networks:
   cust_network:

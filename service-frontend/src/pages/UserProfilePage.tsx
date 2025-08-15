@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import '../styles/ProfilePage.css';
 
@@ -39,6 +39,9 @@ export default function UserProfilePage() {
     const [courses, setCourses] = useState<Course[]>([]);
     const [error, setError] = useState("");
 
+    const [photo, setPhoto] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string>("");
+
     const token = localStorage.getItem("Authorization") || "";
     const API = "http://localhost:4000/api/users";
 
@@ -66,7 +69,7 @@ export default function UserProfilePage() {
             fetchJson(`${API}/${id}`),
             fetchJson(`${API}/${id}/detal`),
             fetchJson(`${API}/${id}/contacts`),
-            fetchJson(`${API}/${id}/courses`)
+            fetchJson(`http://localhost:4000/api/course?userId=${id}`),
         ])
             .then(([userData, infoData, contactsData, coursesData]) => {
                 setUser(userData);
@@ -77,16 +80,95 @@ export default function UserProfilePage() {
             .catch(() => {
                 setError("Ошибка загрузки данных пользователя");
             });
+        fetch(`http://localhost:4000/api/photo/${id}/user`, {
+            headers: { Authorization: token }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Фото не найдено");
+                return res.blob();
+            })
+            .then(blob => {
+                setPhotoPreview(URL.createObjectURL(blob));
+            })
+            .catch(() => {
+                console.log("Фото пользователя отсутствует");
+            });
     }, [id, token]);
 
     if (error) return <div className="profile-page error">{error}</div>;
     if (!user || !info || !contacts) return <div className="profile-page">Загрузка...</div>;
+
+    const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhoto(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handlePhotoUpload = async () => {
+        if (!photo) return alert("Выберите фото");
+
+        const formData = new FormData();
+        formData.append("photo", photo);
+        try {
+            const res = await fetch(`http://localhost:4000/api/photo/${id}/user`, {
+                method: "POST",
+                headers: {
+                    Authorization: token
+                },
+                body: formData
+            });
+
+            if (!res.ok) {
+                throw new Error(`Ошибка загрузки: ${res.status}`);
+            }
+
+            alert("Фото успешно загружено");
+        } catch (err: any) {
+            alert(err.message || "Ошибка загрузки фото");
+        }
+    };
 
     return (
         <div className="profile-page">
             <header className="profile-header">
                 <h1>👤 Просмотр профиля</h1>
             </header>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
+                <div>
+                    {photoPreview ? (
+                        <img
+                            src={photoPreview}
+                            alt="Предпросмотр"
+                            style={{ width: "150px", height: "150px", borderRadius: "50%", objectFit: "cover" }}
+                        />
+                    ) : (
+                        <div
+                            style={{
+                                width: "150px",
+                                height: "150px",
+                                borderRadius: "50%",
+                                background: "#ddd",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                        >
+                            Нет фото
+                        </div>
+                    )}
+                </div>
+
+                <div>
+                    <input type="file" accept="image/*" onChange={handlePhotoChange} />
+                    <button type="button" onClick={handlePhotoUpload} style={{ marginLeft: 10 }}>
+                        Загрузить
+                    </button>
+                </div>
+            </div>
+
 
             <div className="profile-grid">
                 <section className="profile-card">

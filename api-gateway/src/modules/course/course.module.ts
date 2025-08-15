@@ -3,10 +3,14 @@ import { CourseService } from './course.service';
 import { CourseController } from './course.controller';
 import { PrismaModule } from '../prisma/prisma.module';
 import { TaskService } from './task.service';
+import { UserModule } from '../user/user.module';
+import { UserService } from '../user/user.service';
+import { HashModule } from '../hash/hash.module';
+import { fileService } from './file.service';
 
 @Module({
-  imports: [PrismaModule],
-  providers: [CourseService, TaskService],
+  imports: [PrismaModule, UserModule, HashModule],
+  providers: [CourseService, TaskService, UserService, fileService],
   controllers: [CourseController]
 })
 export class CourseModule {}

@@ -3,6 +3,8 @@ import { ResponseDTO } from '../user/dto';
 import { CreateTeacherDTO, UpdateTeacherDTO } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Teacher } from '@prisma/client';
+import { join } from 'path';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class TeachersService {
@@ -46,16 +48,18 @@ export class TeachersService {
 
     async updateOneTeacher(id: number, info: UpdateTeacherDTO): Promise<ResponseDTO> {
         try {
-            const teacher = await this.prisma.teacher.findUnique({ where: { teacher_id: id }})
+            const teacher = await this.prisma.teacher.findUnique({ where: { teacher_id: id } })
             if (!teacher) {
                 throw new NotFoundException()
             }
 
-            await this.prisma.teacher.update({ where: { teacher_id: id}, data: {
-                education: info.education,
-                department: info.department,
-                job_title: info.job_title
-            }})
+            await this.prisma.teacher.update({
+                where: { teacher_id: id }, data: {
+                    education: info.education,
+                    department: info.department,
+                    job_title: info.job_title
+                }
+            })
 
             return { message: 'Учитель обновлен', status: 200 }
         } catch (e) {
@@ -88,10 +92,23 @@ export class TeachersService {
 
     async deleteTeacher(id: number): Promise<ResponseDTO> {
         try {
-            const teacher = await this.prisma.teacher.findUnique({ where: { teacher_id: id } })
+            const teacher = await this.prisma.teacher.findUnique({ where: { teacher_id: Number(id) } })
 
             if (!teacher) {
                 throw new NotFoundException()
+            }
+
+            const filePath = join(process.cwd(), 'uploads', 'teachers', `${id}.jpg`);
+
+            if (filePath) {
+                try {
+                    await fs.access(filePath);
+                    await fs.unlink(filePath);
+                } catch (err) {
+                    if (err.code !== 'ENOENT') {
+                        throw err;
+                    }
+                }
             }
 
             await this.prisma.teacher.delete({

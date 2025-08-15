@@ -1,67 +1,102 @@
 .course-detail {
+  background: linear-gradient(145deg, #1e1e2f, #252538);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   padding: 2rem;
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.course-detail h1 {
+  max-width: 850px;
+  margin: 2rem auto;
   color: #fff;
-  margin-bottom: 1.5rem;
-  font-size: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.course-detail p {
+.course-detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.course-detail img {
+  max-width: 280px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.course-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.course-plan {
   background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid #d1d5db22;
   border-radius: 12px;
   padding: 1.25rem;
-  color: #fff;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .back-link {
-  display: inline-block;
-  margin-bottom: 1rem;
   color: var(--color-primary-light);
-  text-decoration: none;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .back-link:hover {
   text-decoration: underline;
 }
 
-.delete-btn {
+.course-actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  gap: 10px;
+}
+
+.delete-btn,
+.edit-btn {
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  background-color: #ef4444;
-  color: #fff;
   border: none;
   cursor: pointer;
-  transition: opacity .3s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
-.delete-btn:hover {
-  opacity: .9;
+
+.delete-btn {
+  background-color: #ef4444;
+  color: #fff;
+}
+
+.edit-btn {
+  background-color: #3b82f6;
+  color: #fff;
+  text-decoration: none;
+}
+
+.delete-btn:hover,
+.edit-btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
 }
 
 .course-tasks-links {
-  margin-top: 2rem;
-}
-
-.course-tasks-links h2 {
-  color: white
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem;
+  border-radius: 10px;
 }
 
 .tasks-link {
   display: inline-block;
   margin: 0.25rem 0;
   color: var(--color-primary-light);
-  background-color: rgba(255,255,255,0.05);
+  background-color: rgba(255, 255, 255, 0.05);
   padding: 0.5rem 1rem;
   border-radius: 8px;
   text-decoration: none;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 
 .tasks-link:hover {

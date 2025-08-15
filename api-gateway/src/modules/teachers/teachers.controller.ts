@@ -24,7 +24,7 @@ export class TeachersController {
     }
 
     @Put(':id')
-    async updateOne(@Param('id') id: string, data: UpdateTeacherDTO): Promise<ResponseDTO> {
+    async updateOne(@Param('id') id: string, @Body() data: UpdateTeacherDTO): Promise<ResponseDTO> {
         return await this.teachersService.updateOneTeacher(Number(id), data);
     }
 

@@ -11,6 +11,20 @@ services:
       - ../api-gateway/.env
     networks:
       - cust_network
+    volumes:
+      - ./uploads:/app/uploads
+
+  wc-gateway:
+    container_name: wc-gateway
+    build:
+      context: ../wc-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "4001:4001"
+    env_file:
+      - ../wc-gateway/.env
+    networks:
+      - cust_network
 
 networks:
   cust_network:

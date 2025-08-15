@@ -23,10 +23,8 @@ export class UserController {
 
     @Get(':user_id/role')
     async getRole(@Param('user_id') userId: string): Promise<string> {
-        const id = Number(userId)
-        const user = await this.userService.findUserById(id)
-        const role = await this.userService.findUserRole(user.role_id)
-        return role.role
+        const role = await this.userService.findUserRole(Number(userId));
+        return role.role;
     }
 
     @Get(':user_id')
@@ -36,8 +34,7 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        const id = Number(userId);
-        const user = await this.userService.findUserById(id);
+        const user = await this.userService.findUserById(Number(userId));
         if (!user) {
             throw new NotFoundException()
         }
@@ -52,8 +49,7 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        const id = Number(userId);
-        return await this.userService.getUserInfo(id);
+        return await this.userService.getUserInfo(Number(userId));
     }
 
     @Get(':user_id/contacts')
@@ -63,8 +59,7 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        const id = Number(userId);
-        return await this.userService.getUserContacts(id);
+        return await this.userService.getUserContacts(Number(userId));
     }
 
     @Get(':user_id/friends')
@@ -74,8 +69,7 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        const id = Number(userId);
-        return await this.userService.getUserFriends(id);
+        return await this.userService.getUserFriends(Number(userId));
     }
 
     @Get(':user_id/courses')
@@ -85,8 +79,7 @@ export class UserController {
         if (!userId) {
             throw new BadRequestException();
         }
-        const id = Number(userId);
-        return await this.userService.getUserCourses(id);
+        return await this.userService.getUserCourses(Number(userId));
     }
 
     @Put(':user_id/profile')
@@ -136,6 +129,21 @@ export class UserController {
     async deleteById(
         @Param('user_id') userId: string,
     ): Promise<ResponseDTO> {
+        if (!userId) {
+            throw new BadRequestException()
+        }
         return await this.userService.deleteUserById(Number(userId))
+    }
+
+    @Get(':email/email')
+    async getUserByEmail(
+        @Param('email') email: string
+    ): Promise<Omit<User, 'password'>> {
+        const userWithoutPassword = await this.userService.getUserWithoutPasswordByEmail(email)
+        if (!userWithoutPassword) {
+            throw new NotFoundException()
+        }
+
+        return userWithoutPassword
     }
 }

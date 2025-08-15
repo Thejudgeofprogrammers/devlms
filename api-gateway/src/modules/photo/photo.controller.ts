@@ -1,24 +1,101 @@
-import { Controller, MethodNotAllowedException, Post } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { PhotoService } from './photo.service';
-import { ResponseDTO } from '../user/dto';
+import { join } from 'path';
+import { existsSync } from 'fs';
+import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 
 @Controller('photo')
 export class PhotoController {
     constructor(
         private readonly photoService: PhotoService
-    ) {}
+    ) { }
 
-    @Post(':user_id/photo')
-    async uploadUserPhoto(
+    // ===== USER PHOTO =====
+    @Get(':user_id/user')
+    async getUserPhoto(
+        @Param('user_id') userId: string,
+        @Res() res: Response
+    ) {
+        const filePath = join(process.cwd(), 'uploads', 'users', `${userId}.jpg`)
 
-    ): Promise<ResponseDTO> {
-        throw new MethodNotAllowedException
+        res.set({
+            'Cache-Control': 'public, max-age=86400',
+            'Content-Type': 'image/jpeg'
+        });
+
+        if (!existsSync(filePath)) {
+            return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+        }
+
+        return res.sendFile(filePath);
     }
 
-    @Post(':course_id/photo')
-    async uploadCoursePhoto(
+    @Post(':user_id/user')
+    @UseInterceptors(FileInterceptor('photo', {
+        storage: diskStorage({
+            destination: './uploads/users',
+            filename: (req, file, cb) => cb(null, `${req.params.user_id}.jpg`)
+        })
+    }))
+    async uploadUserPhoto(@UploadedFile() file: Express.Multer.File) {
+        return { message: 'Фото пользователя загружено', file: file.filename };
+    }
 
-    ): Promise<ResponseDTO> {
-        throw new MethodNotAllowedException
+    // ===== COURSE PHOTO =====
+    @Get(':course_id/course')
+    async getCoursePhoto(
+        @Param('course_id') courseId: string,
+        @Res() res: Response
+    ) {
+        const filePath = join(process.cwd(), 'uploads', 'courses', `${courseId}.jpg`)
+        res.set({
+            'Cache-Control': 'public, max-age=86400',
+            'Content-Type': 'image/jpeg'
+        });
+
+        if (!existsSync(filePath)) {
+            return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+        }
+
+        return res.sendFile(filePath);
+    }
+
+    @Post(':course_id/course')
+    @UseInterceptors(FileInterceptor('photo', {
+        storage: diskStorage({
+            destination: './uploads/courses',
+            filename: (req, file, cb) => cb(null, `${req.params.course_id}.jpg`)
+        })
+    }))
+    async uploadCoursePhoto(@UploadedFile() file: Express.Multer.File) {
+        return { message: 'Фото курса загружено', file: file.filename };
+    }
+
+    // ===== TEACHER PHOTO =====
+    @Get(':teacher_id/teacher')
+    async getTeacherPhoto(@Param('teacher_id') teacherId: string, @Res() res: Response) {
+        const filePath = join(process.cwd(), 'uploads', 'teachers', `${teacherId}.jpg`);
+        res.set({
+            'Cache-Control': 'public, max-age=86400',
+            'Content-Type': 'image/jpeg'
+        });
+
+        if (!existsSync(filePath)) {
+            return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+        }
+        return res.sendFile(filePath);
+    }
+
+    @Post(':teacher_id/teacher')
+    @UseInterceptors(FileInterceptor('photo', {
+        storage: diskStorage({
+            destination: './uploads/teachers',
+            filename: (req, file, cb) => cb(null, `${req.params.teacher_id}.jpg`)
+        })
+    }))
+    async uploadTeacherPhoto(@UploadedFile() file: Express.Multer.File) {
+        return { message: 'Фото преподавателя загружено', file: file.filename };
     }
 }

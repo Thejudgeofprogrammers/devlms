@@ -31,9 +31,20 @@ export default function UserCoursesPage() {
         }
 
         async function fetchCourses() {
-            const response = await fetch('http://localhost:4000/api/course');
-            const data = await response.json();
-            setCourses(data);
+            const userId = localStorage.getItem('userId');
+            try {
+                const response = await fetch(`http://localhost:4000/api/course?userId=${userId}`);
+                if (!response.ok) {
+                    console.error('Ошибка при получении курсов:', response.status);
+                    setCourses([]);
+                    return;
+                }
+                const data = await response.json();
+                setCourses(Array.isArray(data) ? data : []);
+            } catch (e) {
+                console.error('Ошибка сети при получении курсов:', e);
+                setCourses([]);
+            }
         }
 
         if (id) {
@@ -65,7 +76,15 @@ export default function UserCoursesPage() {
                             className="course-card"
                             key={course.course_id}
                         >
-                            <div className="course-image"/>
+                            <div className="course-image">
+                                <img
+                                    src={`http://localhost:4000/api/photo/${course.course_id}/course`}
+                                    alt={course.name}
+                                    onError={(e) => {
+                                        (e.currentTarget as HTMLImageElement).src = '/assets/temp.jpg';
+                                    }}
+                                />
+                            </div>
                             <div className="course-info">
                                 <h3>{course.name}</h3>
                                 <p className="course-category">{course.category ?? 'Категория'}</p>

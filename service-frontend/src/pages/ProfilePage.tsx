@@ -40,7 +40,8 @@ export default function ProfilePage() {
     const [editMode, setEditMode] = useState(false);
     const [userId, setUserId] = useState(localStorage.getItem("userId") || "");
     const [token, setToken] = useState(localStorage.getItem("Authorization") || "");
-
+    const [photo, setPhoto] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string>("");
 
     const API = "http://localhost:4000/api/users";
 
@@ -48,7 +49,7 @@ export default function ProfilePage() {
         console.log("useEffect сработал");
         const userId = localStorage.getItem("userId");
         const token = localStorage.getItem("Authorization");
-        console.log(userId, token)
+
         if (!userId || !token) {
             setError("Пользователь не авторизован");
             return;
@@ -60,15 +61,12 @@ export default function ProfilePage() {
         };
 
         async function fetchJson(url: string) {
-            console.log("Запрос на URL:", url);
-            console.log("Headers:", headers);
             const res = await fetch(url, {
                 headers,
                 credentials: 'include',
             });
             if (!res.ok) {
-                const errorText = await res.text();
-                throw new Error(`Ошибка запроса: ${res.status} - ${errorText}`);
+                throw new Error(`Ошибка запроса: ${res.status}`);
             }
             return res.json();
         }
@@ -77,7 +75,7 @@ export default function ProfilePage() {
             fetchJson(`${API}/${userId}`),
             fetchJson(`${API}/${userId}/detal`),
             fetchJson(`${API}/${userId}/contacts`),
-            fetchJson(`${API}/${userId}/courses`),
+            fetchJson(`http://localhost:4000/api/course?userId=${userId}`),
         ])
             .then(([userData, infoData, contactsData, coursesData]) => {
                 setUser(userData);
@@ -88,6 +86,22 @@ export default function ProfilePage() {
             .catch(() => {
                 setError("Ошибка загрузки профиля");
             });
+
+
+        fetch(`http://localhost:4000/api/photo/${userId}/user`, {
+            headers: { Authorization: token }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Фото не найдено");
+                return res.blob();
+            })
+            .then(blob => {
+                setPhotoPreview(URL.createObjectURL(blob));
+            })
+            .catch(() => {
+                console.log("Фото пользователя отсутствует");
+            });
+
     }, []);
 
 
@@ -95,6 +109,40 @@ export default function ProfilePage() {
         if (!info) return;
         setInfo({ ...info, [e.target.name]: e.target.value });
     };
+
+    const handlePhotoChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhoto(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handlePhotoUpload = async () => {
+        if (!photo) return alert("Выберите фото");
+
+        const formData = new FormData();
+        formData.append("photo", photo);
+
+        try {
+            const res = await fetch(`http://localhost:4000/api/photo/${userId}/user`, {
+                method: "POST",
+                headers: {
+                    Authorization: token
+                },
+                body: formData
+            });
+
+            if (!res.ok) {
+                throw new Error(`Ошибка загрузки: ${res.status}`);
+            }
+
+            alert("Фото успешно загружено");
+        } catch (err: any) {
+            alert(err.message || "Ошибка загрузки фото");
+        }
+    };
+
 
     const handleContactsChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!contacts) return;
@@ -142,6 +190,39 @@ export default function ProfilePage() {
             <header className="profile-header">
                 <h1>👤 Профиль пользователя</h1>
             </header>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "20px", marginBottom: "20px" }}>
+                <div>
+                    {photoPreview ? (
+                        <img
+                            src={photoPreview}
+                            alt="Предпросмотр"
+                            style={{ width: "150px", height: "150px", borderRadius: "50%", objectFit: "cover" }}
+                        />
+                    ) : (
+                        <div
+                            style={{
+                                width: "150px",
+                                height: "150px",
+                                borderRadius: "50%",
+                                background: "#ddd",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                        >
+                            Нет фото
+                        </div>
+                    )}
+                </div>
+
+                <div>
+                    <input type="file" accept="image/*" onChange={handlePhotoChange} />
+                    <button type="button" onClick={handlePhotoUpload} style={{ marginLeft: 10 }}>
+                        Загрузить
+                    </button>
+                </div>
+            </div>
 
             {!editMode ? (
                 <>

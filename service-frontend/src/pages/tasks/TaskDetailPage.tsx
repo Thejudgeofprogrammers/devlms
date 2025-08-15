@@ -1,22 +1,44 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import '../../styles/TaskDetalPage.css'
+import '../../styles/TaskDetalPage.css';
 
-interface Task { task_id: number, title: string, description?: string, deadline?: string }
+interface Task {
+    task_id: number;
+    title: string;
+    description?: string;
+    deadline?: string;
+}
 
 export default function TaskDetailPage() {
     const { course_id, task_id } = useParams();
     const navigate = useNavigate();
     const [task, setTask] = useState<Task | null>(null);
+    const [role, setRole] = useState<string | null>(null);
 
+    // Загружаем задачу
     useEffect(() => {
-        async function load() {
-            const res = await fetch(`http://localhost:4000/api/course/${course_id}/tasks/${task_id}`);
-            const data = await res.json();
-            setTask(data);
+        async function loadTask() {
+            try {
+                const res = await fetch(`http://localhost:4000/api/course/${course_id}/tasks/${task_id}`);
+                const data = await res.json();
+                setTask(data);
+            } catch (err) {
+                console.error("Ошибка загрузки задачи", err);
+            }
         }
-        load();
+        loadTask();
     }, [course_id, task_id]);
+
+    // Загружаем роль пользователя
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+            fetch(`http://localhost:4000/api/users/${userId}/role`)
+                .then(res => res.text())
+                .then(data => setRole(data))
+                .catch(err => console.error("Ошибка при получении роли", err));
+        }
+    }, []);
 
     async function handleDelete() {
         const ok = window.confirm('Удалить задачу?');
@@ -61,10 +83,15 @@ export default function TaskDetailPage() {
                 📅 {task.deadline ? formatDeadlineWithCountdown(task.deadline) : ''}
             </p>
 
-            <Link to={`/courses/${course_id}/tasks/${task_id}/edit`}>✏️ Редактировать</Link> &nbsp;
-            <button onClick={handleDelete}>🗑 Удалить</button>
-            <br /><Link to={`/courses/${course_id}/tasks`}>← Назад</Link>
+            {(role === "Admin" || role === "Teacher") && (
+                <>
+                    <Link to={`/courses/${course_id}/tasks/${task_id}/edit`}>✏️ Редактировать</Link> &nbsp;
+                    <button onClick={handleDelete}>🗑 Удалить</button>
+                </>
+            )}
+
+            <br />
+            <Link to={`/courses/${course_id}/tasks`}>← Назад</Link>
         </div>
     );
-
 }
