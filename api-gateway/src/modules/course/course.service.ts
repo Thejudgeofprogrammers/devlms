@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCourseDto, UpdateCourseDto } from './dto';
 import { ResponseDTO } from '../user/dto';
 import { join } from 'path';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync, unlinkSync } from 'fs';
 
 @Injectable()
 export class CourseService {
@@ -39,6 +39,7 @@ export class CourseService {
             if (!course) throw new NotFoundException();
             return course;
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }
@@ -47,6 +48,7 @@ export class CourseService {
         try {
             return await this.prisma.course.create({ data });
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }
@@ -59,12 +61,29 @@ export class CourseService {
                 throw new NotFoundException()
             }
 
-            const filePath = join(process.cwd(), 'uploads', 'courses', `${course_id}.jpg`);
+            const tasks = await this.prisma.task.findMany({ where: { course_id } });
 
-            if (filePath) {
+            for (const task of tasks) {
+                const files = await this.prisma.file.findMany({ where: { task_id: task.task_id } });
+                for (const file of files) {
+                    const filePath = join(process.cwd(), 'uploads', 'tasks', file.file_path);
+                    if (existsSync(filePath)) {
+                        unlinkSync(filePath);
+                    }
+                }
+
+                await this.prisma.file.deleteMany({ where: { task_id: task.task_id } });
+
+                // Удаляем задачу
+                await this.prisma.task.delete({ where: { task_id: task.task_id } });
+            }
+
+            const courseFilePath  = join(process.cwd(), 'uploads', 'courses', `${course_id}.jpg`);
+
+            if (courseFilePath) {
                 try {
-                    await fs.access(filePath);
-                    await fs.unlink(filePath);
+                    await fs.access(courseFilePath);
+                    await fs.unlink(courseFilePath);
                 } catch (err) {
                     if (err.code !== 'ENOENT') {
                         throw err;
@@ -74,6 +93,7 @@ export class CourseService {
 
             return await this.prisma.course.delete({ where: { course_id } })
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }
@@ -98,6 +118,7 @@ export class CourseService {
 
             return users
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }
@@ -152,6 +173,7 @@ export class CourseService {
 
             return { message: 'Пользователь удален с курса', status: 200 }
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }

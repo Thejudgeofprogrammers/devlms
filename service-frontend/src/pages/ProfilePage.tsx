@@ -38,8 +38,8 @@ export default function ProfilePage() {
     const [courses, setCourses] = useState<Course[]>([]);
     const [error, setError] = useState<string>("");
     const [editMode, setEditMode] = useState(false);
-    const [userId, setUserId] = useState(localStorage.getItem("userId") || "");
-    const [token, setToken] = useState(localStorage.getItem("Authorization") || "");
+    const [userId] = useState(localStorage.getItem("userId") || "");
+    const [token] = useState(localStorage.getItem("Authorization") || "");
     const [photo, setPhoto] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string>("");
 

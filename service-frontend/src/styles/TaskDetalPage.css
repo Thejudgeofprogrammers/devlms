@@ -1,70 +1,172 @@
+/* === Общая страница === */
 .task-detail-page {
-    padding: 2rem;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.task-detail-page h1 {
-    margin-bottom: 1rem;
-    font-size: 2rem;
-    color: #fff;
-}
-
-.task-detail-page p {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid #d1d5db22;
-    border-radius: 12px;
-    padding: 1rem;
-    color: #fff;
-    margin-bottom: 0.75rem;
-}
-
-.task-detail-page a,
-.task-detail-page button {
-    margin-bottom: 1rem;
-    display: inline-block;
-    margin-right: 0.5rem;
-    background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: opacity .2s;
-}
-
-.task-detail-page a:hover,
-.task-detail-page button:hover {
-    opacity: 0.85;
-}
-
-.task-detail-page .deadline {
-    font-style: italic;
-    font-size: 0.9rem;
-}
-
-.teacher-info {
-    margin-top: 20px;
-    margin-bottom: 30px;
+    width: 500px;
+    margin: 2rem auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 24px;
+    font-family: "Segoe UI", sans-serif;
+    color: #e5e7eb;
 }
 
-.info-row {
+/* === Карточки === */
+.card {
+    background: #1f1f1f;/* глубокий тёмный градиент */
+    border-radius: 14px;
+    padding: 2rem;
+
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.card h1, 
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #f9fafb;
+}
+
+/* === Описание === */
+.description {
+    margin: 0.5rem 0 1.2rem;
+    color: #9ca3af;
+    line-height: 1.5;
+}
+
+/* === Дедлайн === */
+.deadline {
+    font-weight: 600;
+    color: #fbbf24;
+    margin-top: 0.5rem;
+}
+
+/* === Кнопки === */
+.actions {
+    margin-top: 1.2rem;
     display: flex;
-    gap: 8px;
-    font-size: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.label {
-    font-weight: bold;
-    color: #ffffff;
-    min-width: 120px;
+.btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    color: #fff;
+    font-weight: 500;
+    transition: opacity 0.2s, transform 0.2s;
 }
 
-.value {
-    color: #ffffff;
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btn.edit {
+    background: #2563eb;
+}
+
+.btn.delete {
+    background: #dc2626;
+}
+
+/* === Файлы === */
+.files-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 1.2rem;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1f2937;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.file-item:hover {
+    background: #374151;
+    transform: translateY(-2px);
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+}
+
+.file-icon {
+    font-size: 1.8rem;
+    color: #60a5fa;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #f3f4f6;
+}
+
+.file-meta {
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+/* === Действия над файлами === */
+.file-actions button {
+    background: transparent;
+    border: none;
+    color: #ef4444;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.file-actions button:hover {
+    transform: scale(1.25);
+}
+
+/* === Загрузка файлов === */
+.file-upload {
+    margin-top: 1.2rem;
+}
+
+.upload-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    padding: 0.7rem 1.4rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.upload-btn:hover {
+    opacity: 0.85;
+    transform: translateY(-2px);
+}
+
+/* === Ссылка назад === */
+.back-link {
+    margin-top: 1.2rem;
+    display: inline-block;
+    color: #60a5fa;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+    color: #3b82f6;
 }

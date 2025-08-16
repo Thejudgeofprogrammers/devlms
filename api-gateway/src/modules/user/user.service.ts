@@ -66,34 +66,44 @@ export class UserService {
     }
 
     async getUsersWithoutPassword() {
-        return await this.prisma.user.findMany({
-            select: {
-                user_id: true,
-                email: true,
-                phone_number: true,
-                role: {
-                    select: {
-                        role: true,
+        try {
+            return await this.prisma.user.findMany({
+                select: {
+                    user_id: true,
+                    email: true,
+                    phone_number: true,
+                    role: {
+                        select: {
+                            role: true,
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
+        }
     }
 
     async getUserWithoutPassword(user_id: number) {
-        return await this.prisma.user.findUnique({
-            where: { user_id: Number(user_id) },
-            select: {
-                user_id: true,
-                email: true,
-                phone_number: true,
-                role: {
-                    select: {
-                        role: true,
+        try {
+            return await this.prisma.user.findUnique({
+                where: { user_id: Number(user_id) },
+                select: {
+                    user_id: true,
+                    email: true,
+                    phone_number: true,
+                    role: {
+                        select: {
+                            role: true,
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
+        }
     }
 
     async getUserWithoutPasswordByEmail(email: string) {
@@ -106,6 +116,7 @@ export class UserService {
 
             return user
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }

@@ -183,7 +183,7 @@ model File {
   original_name String
   file_path     String
   mime_type     String
-  size          BigInt
+  size          Int
   created_at    DateTime @default(now())
 
   // Связь с задачей

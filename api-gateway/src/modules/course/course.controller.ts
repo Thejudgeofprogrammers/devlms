@@ -1,10 +1,16 @@
-import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
-import { Course, CourseParticipants, Task } from '@prisma/client';
+import { BadRequestException, Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Course, CourseParticipants, File, Task } from '@prisma/client';
 import { CreateCourseDto, CreateTaskDTO, ResponseCourse, ResponseTask, UpdateCourseDto, UpdateTaskDTO } from './dto';
 import { CourseService } from './course.service';
 import { TaskService } from './task.service';
 import { ResponseDTO } from '../user/dto';
 import { UserService } from '../user/user.service';
+import { FileService } from './file.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { Response } from 'express';
+import { join } from 'path';
+import { existsSync } from 'fs';
 
 @Controller('course')
 export class CourseController {
@@ -12,6 +18,7 @@ export class CourseController {
         private readonly userService: UserService,
         private readonly courseService: CourseService,
         private readonly taskService: TaskService,
+        private readonly fileService: FileService,
     ) { }
 
     @Get(':course_id/tasks')
@@ -201,5 +208,96 @@ export class CourseController {
             throw new BadRequestException()
         }
         return await this.courseService.deleteParticipantById(Number(course_id), Number(user_id))
+    }
+
+    @Get(':task_id/files')
+    async getFiles(
+        @Param('task_id') task_id: string,
+    ): Promise<File[]> {
+        if (!task_id) throw new BadRequestException();
+
+        const files = await this.fileService.getFiles({
+            task_id: Number(task_id),
+        });
+
+        if (!files.length) {
+            return []
+        }
+
+        return files;
+    }
+
+    @Get(':task_id/files/:file_id')
+    async getFile(
+        @Param('task_id') task_id: string,
+        @Param('file_id') file_id: string,
+        @Res() res: Response
+    ) {
+        const file = await this.fileService.getFile({
+            task_id: Number(task_id),
+            file_id: Number(file_id)
+        })
+
+        const filePath = join(process.cwd(), 'uploads', 'tasks', file.file_path)
+
+        if (!existsSync(filePath)) {
+            throw new NotFoundException('Файл не найден')
+        }
+
+        res.set({
+            'Content-Type': file.mime_type,
+            'Content-Disposition': `attachment; filename="${file.original_name}"`,
+        })
+
+        return res.sendFile(filePath)
+    }
+
+    @Post(':task_id/files')
+    @UseInterceptors(FileInterceptor('file', {
+        storage: diskStorage({
+            destination: './uploads/tasks',
+            filename: (req, file, cb) => {
+                const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+
+                const safeName = `${Date.now()}-${originalName.replace(/[^\w\d.-]/g, '_')}`;
+
+                cb(null, safeName);
+            }
+        })
+    }))
+    async addFile(
+        @UploadedFile() file: Express.Multer.File,
+        @Param('task_id') task_id: string,
+    ): Promise<File> {
+        if (!task_id) {
+            throw new BadRequestException()
+        }
+
+        const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+        const safeName = `${Date.now()}-${originalName.replace(/[^\w\d.-]/g, '_')}`;
+
+
+        return await this.fileService.addFile({
+            task_id: Number(task_id),
+            original_name: originalName,
+            file_path: safeName,
+            mime_type: file.mimetype,
+            size: Number(file.size),
+        });
+    }
+
+    @Delete(':task_id/files/:file_id')
+    async delFile(
+        @Param('task_id') task_id: string,
+        @Param('file_id') file_id: string,
+    ): Promise<{ status: number }> {
+        if (!task_id || !file_id) {
+            throw new BadRequestException()
+        }
+
+        return await this.fileService.delFile({
+            task_id: Number(task_id),
+            file_id: Number(file_id),
+        });
     }
 }

@@ -19,22 +19,22 @@ export class UpdateCourseDto {
 export class ResponseCourse {
     @IsString()
     message: string;
-    
+
     data: CreateCourseDto;
 }
 
 export class CreateTaskDTO {
     @IsString()
     title: string;
-    
+
     @IsOptional()
     @IsString()
     description?: string;
-    
+
     @IsOptional()
     @IsDateString()
     deadline?: string;
-    
+
     @IsNumber()
     course_id: number;
 }
@@ -42,11 +42,11 @@ export class CreateTaskDTO {
 export class UpdateTaskDTO {
     @IsString()
     title: string;
-    
+
     @IsOptional()
     @IsString()
     description?: string;
-    
+
     @IsOptional()
     @IsDateString()
     deadline?: string;

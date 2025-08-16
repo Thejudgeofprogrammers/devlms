@@ -6,11 +6,11 @@ import { TaskService } from './task.service';
 import { UserModule } from '../user/user.module';
 import { UserService } from '../user/user.service';
 import { HashModule } from '../hash/hash.module';
-import { fileService } from './file.service';
+import { FileService } from './file.service';
 
 @Module({
   imports: [PrismaModule, UserModule, HashModule],
-  providers: [CourseService, TaskService, UserService, fileService],
+  providers: [CourseService, TaskService, UserService, FileService],
   controllers: [CourseController]
 })
 export class CourseModule {}

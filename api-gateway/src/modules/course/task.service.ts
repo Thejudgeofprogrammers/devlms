@@ -2,6 +2,8 @@ import { Injectable, InternalServerErrorException, NotFoundException } from "@ne
 import { CreateTaskDTO, ResponseTask, UpdateTaskDTO } from "./dto";
 import { Task } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
+import { join } from "path";
+import { existsSync, unlinkSync } from "fs";
 
 @Injectable()
 export class TaskService {
@@ -16,6 +18,7 @@ export class TaskService {
 
             return tasks;
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e)
         }
     }
@@ -26,6 +29,7 @@ export class TaskService {
             if (!task) throw new NotFoundException();
             return task;
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e);
         }
     }
@@ -47,6 +51,7 @@ export class TaskService {
 
             return { message: 'Задача создана', status: 201 };
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e);
         }
     }
@@ -84,6 +89,17 @@ export class TaskService {
             const task = await this.prisma.task.findFirst({ where: { course_id, task_id } });
             if (!task) throw new NotFoundException();
 
+            const files = await this.prisma.file.findMany({ where: { task_id } });
+
+            for (const file of files) {
+                const filePath = join(process.cwd(), 'uploads', 'tasks', file.file_path);
+                if (existsSync(filePath)) {
+                    unlinkSync(filePath);
+                }
+            }
+
+            await this.prisma.file.deleteMany({ where: { task_id } });
+
             await this.prisma.task.delete({
                 where: { task_id }
             });
@@ -93,6 +109,7 @@ export class TaskService {
                 status: 200,
             };
         } catch (e) {
+            console.error(e)
             throw new InternalServerErrorException(e);
         }
     }

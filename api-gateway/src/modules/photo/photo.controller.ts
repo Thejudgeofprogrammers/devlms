@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, InternalServerErrorException, NotFoundException, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { PhotoService } from './photo.service';
 import { join } from 'path';
 import { existsSync } from 'fs';
@@ -18,18 +18,23 @@ export class PhotoController {
         @Param('user_id') userId: string,
         @Res() res: Response
     ) {
-        const filePath = join(process.cwd(), 'uploads', 'users', `${userId}.jpg`)
+        try {
+            const filePath = join(process.cwd(), 'uploads', 'users', `${userId}.jpg`)
 
-        res.set({
-            'Cache-Control': 'public, max-age=86400',
-            'Content-Type': 'image/jpeg'
-        });
+            res.set({
+                'Cache-Control': 'public, max-age=86400',
+                'Content-Type': 'image/jpeg'
+            });
 
-        if (!existsSync(filePath)) {
-            return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+            if (!existsSync(filePath)) {
+                return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+            }
+
+            return res.sendFile(filePath);
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
         }
-
-        return res.sendFile(filePath);
     }
 
     @Post(':user_id/user')
@@ -40,7 +45,12 @@ export class PhotoController {
         })
     }))
     async uploadUserPhoto(@UploadedFile() file: Express.Multer.File) {
-        return { message: 'Фото пользователя загружено', file: file.filename };
+        try {
+            return { message: 'Фото пользователя загружено', file: file.filename };
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
+        }
     }
 
     // ===== COURSE PHOTO =====
@@ -49,17 +59,22 @@ export class PhotoController {
         @Param('course_id') courseId: string,
         @Res() res: Response
     ) {
-        const filePath = join(process.cwd(), 'uploads', 'courses', `${courseId}.jpg`)
-        res.set({
-            'Cache-Control': 'public, max-age=86400',
-            'Content-Type': 'image/jpeg'
-        });
+        try {
+            const filePath = join(process.cwd(), 'uploads', 'courses', `${courseId}.jpg`)
+            res.set({
+                'Cache-Control': 'public, max-age=86400',
+                'Content-Type': 'image/jpeg'
+            });
 
-        if (!existsSync(filePath)) {
-            return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+            if (!existsSync(filePath)) {
+                return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+            }
+
+            return res.sendFile(filePath);
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
         }
-
-        return res.sendFile(filePath);
     }
 
     @Post(':course_id/course')
@@ -70,22 +85,32 @@ export class PhotoController {
         })
     }))
     async uploadCoursePhoto(@UploadedFile() file: Express.Multer.File) {
-        return { message: 'Фото курса загружено', file: file.filename };
+        try {
+            return { message: 'Фото курса загружено', file: file.filename };
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
+        }
     }
 
     // ===== TEACHER PHOTO =====
     @Get(':teacher_id/teacher')
     async getTeacherPhoto(@Param('teacher_id') teacherId: string, @Res() res: Response) {
-        const filePath = join(process.cwd(), 'uploads', 'teachers', `${teacherId}.jpg`);
-        res.set({
-            'Cache-Control': 'public, max-age=86400',
-            'Content-Type': 'image/jpeg'
-        });
+        try {
+            const filePath = join(process.cwd(), 'uploads', 'teachers', `${teacherId}.jpg`);
+            res.set({
+                'Cache-Control': 'public, max-age=86400',
+                'Content-Type': 'image/jpeg'
+            });
 
-        if (!existsSync(filePath)) {
-            return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+            if (!existsSync(filePath)) {
+                return res.sendFile(join(process.cwd(), 'pictures', 'temp.jpg'));
+            }
+            return res.sendFile(filePath);
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
         }
-        return res.sendFile(filePath);
     }
 
     @Post(':teacher_id/teacher')
@@ -96,6 +121,11 @@ export class PhotoController {
         })
     }))
     async uploadTeacherPhoto(@UploadedFile() file: Express.Multer.File) {
-        return { message: 'Фото преподавателя загружено', file: file.filename };
+        try {
+            return { message: 'Фото преподавателя загружено', file: file.filename };
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException(e)
+        }
     }
 }
