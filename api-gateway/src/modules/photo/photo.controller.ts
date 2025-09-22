@@ -1,10 +1,22 @@
-import { Controller, Get, InternalServerErrorException, NotFoundException, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Controller, Get, InternalServerErrorException, NotFoundException, Param, Post, Res, UploadedFile, UseFilters, UseInterceptors } from '@nestjs/common';
 import { PhotoService } from './photo.service';
-import { join } from 'path';
+import { extname, join } from 'path';
 import { existsSync } from 'fs';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { MulterExceptionFilter } from '../../filters/multerFilter';
+
+const imageFilter = (req: Request, file: Express.Multer.File, cb: any) => {
+    const allowExt = ['.jpg', '.jpeg', '.png'];
+    const fileExt = extname(file.originalname).toLowerCase()
+
+    if (!allowExt.includes(fileExt)) {
+        return cb(new BadRequestException('Не допустимый тип файла'))
+    }
+
+    cb(null, true)
+}
 
 @Controller('photo')
 export class PhotoController {
@@ -42,8 +54,11 @@ export class PhotoController {
         storage: diskStorage({
             destination: './uploads/users',
             filename: (req, file, cb) => cb(null, `${req.params.user_id}.jpg`)
-        })
+        }),
+        fileFilter: imageFilter,
+        limits: { fileSize: 10 * 1024 * 1024 }
     }))
+    @UseFilters(MulterExceptionFilter)
     async uploadUserPhoto(@UploadedFile() file: Express.Multer.File) {
         try {
             return { message: 'Фото пользователя загружено', file: file.filename };
@@ -82,8 +97,11 @@ export class PhotoController {
         storage: diskStorage({
             destination: './uploads/courses',
             filename: (req, file, cb) => cb(null, `${req.params.course_id}.jpg`)
-        })
+        }),
+        fileFilter: imageFilter,
+        limits: { fileSize: 10 * 1024 * 1024 }
     }))
+    @UseFilters(MulterExceptionFilter)
     async uploadCoursePhoto(@UploadedFile() file: Express.Multer.File) {
         try {
             return { message: 'Фото курса загружено', file: file.filename };
@@ -118,8 +136,11 @@ export class PhotoController {
         storage: diskStorage({
             destination: './uploads/teachers',
             filename: (req, file, cb) => cb(null, `${req.params.teacher_id}.jpg`)
-        })
+        }),
+        fileFilter: imageFilter,
+        limits: { fileSize: 10 * 1024 * 1024 }
     }))
+    @UseFilters(MulterExceptionFilter)
     async uploadTeacherPhoto(@UploadedFile() file: Express.Multer.File) {
         try {
             return { message: 'Фото преподавателя загружено', file: file.filename };

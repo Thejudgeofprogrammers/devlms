@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  create:
+    desc: Создание cluster
+    cmds:
+      - kind create cluster --name kind-cluster --config ./config/kind-config.yaml
+
+  install-ingress:
+    desc: Установка ingress
+    cmds:
+      - kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
